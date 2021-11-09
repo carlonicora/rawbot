@@ -1,0 +1,6 @@
+.idea
+./cache
+./logs
+.env
+./vendor
+.docker/.env

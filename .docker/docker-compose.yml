@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  nginx-raw-v3-0:
+    container_name: nginx-raw-${SERVER_VERSION}
+    image: carlonicora/raw-nginx:${SERVER_VERSION}
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+      args:
+        - SERVER_NAME=${SERVER_NAME}
+        - CONTAINER_NAME=${COMPOSE_PROJECT_NAME}
+        - SERVER_VERSION=${SERVER_VERSION}
+    expose:
+      - "80"
+    volumes:
+      - ../:/var/www/html:delegated
+      - ../logs:/logs/nginx:delegated
+    networks:
+      - default_network
+
+  raw-v3-0:
+    container_name: raw-${SERVER_VERSION}
+    image: carlonicora/raw:${SERVER_VERSION}
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./php-fpm/Dockerfile
+      target: ${ENVIRONMENT}
+      args:
+        - XDEBUG_HOST=${XDEBUG_HOST}
+        - XDEBUG_PORT=${XDEBUG_PORT}
+    volumes:
+      - ../:/var/www/html:delegated
+    networks:
+      - default_network
+
+networks:
+  default_network:
+    driver: bridge
+    name: carlonicora
