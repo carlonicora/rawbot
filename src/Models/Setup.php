@@ -2,7 +2,12 @@
 namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
-use CarloNicora\Minimalism\Raw\Factories\CommandFactory;
+use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
+use CarloNicora\Minimalism\Raw\Commands\CharacterCommand;
+use CarloNicora\Minimalism\Raw\Commands\DiceCommand;
+use CarloNicora\Minimalism\Raw\Commands\RollCommand;
+use CarloNicora\Minimalism\Raw\Commands\SessionCommand;
+use CarloNicora\Minimalism\Raw\Objects\Request;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -18,8 +23,16 @@ class Setup extends AbstractRawModel
     {
         $token = $this->getToken();
 
-        $currentCommands = $this->getPublishedCommands(token: $token);
-        $commands = CommandFactory::createAll(pools: $this->pools);
+        //$currentCommands = $this->getPublishedCommands(token: $token);
+
+        $emptyRequest = new Request();
+        $commands = [
+            new CampaignCommand($emptyRequest),
+            new DiceCommand($emptyRequest),
+            new RollCommand($emptyRequest),
+            new SessionCommand($emptyRequest),
+            new CharacterCommand($emptyRequest),
+        ];
 
         foreach ($commands as $command) {
             $this->addCommand(
@@ -27,7 +40,6 @@ class Setup extends AbstractRawModel
                 definition: $command->getDefinition(),
             );
         }
-
 
         return 200;
     }

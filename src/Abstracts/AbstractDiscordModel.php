@@ -10,6 +10,7 @@ use CarloNicora\Minimalism\Raw\Data\DataReaders\ServersDataReader;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
 use CarloNicora\Minimalism\Raw\Enums\RawError;
 use CarloNicora\Minimalism\Raw\Exceptions\ErrorException;
+use CarloNicora\Minimalism\Raw\Models\Discord\Character;
 use CarloNicora\Minimalism\Raw\Objects\Request;
 use CarloNicora\Minimalism\Raw\Services\Discord\Payload\Payload;
 use Exception;
@@ -61,36 +62,44 @@ class AbstractDiscordModel extends AbstractModel
 
         $payloadObject = new Payload($payload);
 
-        $server = $this->readServer->byDiscordServerId(discordServerId: $payloadObject->getGuild()->getId());
+        try {
+            $server = $this->readServer->byDiscordServerId(discordServerId: $payloadObject->getGuild()->getId());
+        } catch (Exception) {
+            $server = null;
+        }
 
         $isGM = false;
         $character = null;
         $npc = null;
 
-        if ($server->getGm() === $payloadObject->getUser()->getId()) {
-            $isGM = true;
-        } else {
-            try {
-                $character = $this->readCharacter->byServerIdDiscordUserId(
-                    serverId: $server->getId(),
-                    discordUserId: $payloadObject->getUser()->getId(),
-                );
-            } catch (Exception) {
-                throw new ErrorException(RawError::UserWithoutCharacter->getMessage());
-            }
-        }
-
-        if ($isGM && $payloadObject->hasParameter(PayloadParameter::Character->value)){
-            if ($character === null){
-                $character = $this->readCharacter->byServerIdShortname(
-                    serverId: $server->getId(),
-                    shortname: $payloadObject->getParameter(PayloadParameter::Character),
-                );
+        if ($server !== null) {
+            if ($server->getGm() === $payloadObject->getUser()->getId()) {
+                $isGM = true;
             } else {
-                $npc = $this->readCharacter->byServerIdShortname(
-                    serverId: $server->getId(),
-                    shortname: $payloadObject->getParameter(PayloadParameter::Character),
-                );
+                try {
+                    $character = $this->readCharacter->byServerIdDiscordUserId(
+                        serverId: $server->getId(),
+                        discordUserId: $payloadObject->getUser()->getId(),
+                    );
+                } catch (Exception) {
+                    if (!static::class === Character::class || !$payloadObject->hasParameter(PayloadParameter::Create)) {
+                        throw new ErrorException(RawError::UserWithoutCharacter->getMessage());
+                    }
+                }
+            }
+
+            if ($isGM && $payloadObject->hasParameter(PayloadParameter::Character)) {
+                if ($character === null) {
+                    $character = $this->readCharacter->byServerIdShortname(
+                        serverId: $server->getId(),
+                        shortname: $payloadObject->getParameter(PayloadParameter::Character),
+                    );
+                } else {
+                    $npc = $this->readCharacter->byServerIdShortname(
+                        serverId: $server->getId(),
+                        shortname: $payloadObject->getParameter(PayloadParameter::Character),
+                    );
+                }
             }
         }
 

@@ -9,15 +9,15 @@ class Request
 {
     /**
      * @param Payload|null $payload
-     * @param Server $server
      * @param bool $isGM
+     * @param Server|null $server
      * @param Character|null $character
      * @param Character|null $nonPlayingCharacter
      */
     public function __construct(
-        private ?Payload $payload,
-        private Server $server,
-        private bool $isGM,
+        private ?Payload $payload=null,
+        private ?Server $server=null,
+        private bool $isGM=false,
         private ?Character $character=null,
         private ?Character $nonPlayingCharacter=null,
     )
@@ -34,32 +34,12 @@ class Request
     }
 
     /**
-     * @param Payload $payload
-     */
-    public function setPayload(
-        Payload $payload,
-    ): void
-    {
-        $this->payload = $payload;
-    }
-
-    /**
-     * @return Server
+     * @return Server|null
      */
     public function getServer(
-    ): Server
+    ): ?Server
     {
         return $this->server;
-    }
-
-    /**
-     * @param Server $server
-     */
-    public function setServer(
-        Server $server,
-    ): void
-    {
-        $this->server = $server;
     }
 
     /**

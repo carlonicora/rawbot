@@ -6,8 +6,8 @@ use RuntimeException;
 
 class Server extends AbstractDataObject
 {
-    /** @var int  */
-    private int $id;
+    /** @var int|null  */
+    private ?int $id=null;
 
     /** @var int  */
     private int $settingId;
@@ -27,7 +27,7 @@ class Server extends AbstractDataObject
     public function __construct(
         ?array $data = null,
         ?int $id=null,
-        ?int $settingId=null,
+        ?int $settingId=1,
         ?string $serverId=null,
         ?string $gm=null,
         ?string $campaign=null,
@@ -38,7 +38,7 @@ class Server extends AbstractDataObject
             parent::__construct($data);
         } else {
             $this->id = $id;
-            $this->settingId = $settingId??1;
+            $this->settingId = $settingId;
             $this->serverId = $serverId??throw new RuntimeException('Discord Server Id missing', 412);
             $this->gm = $gm??throw new RuntimeException('Discord User Id missing', 412);
             $this->campaign = $campaign;

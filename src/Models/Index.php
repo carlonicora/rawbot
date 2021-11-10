@@ -1,6 +1,9 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Models;
 
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
+use CarloNicora\Minimalism\Raw\Models\Discord\Campaign;
+use CarloNicora\Minimalism\Raw\Models\Discord\Character;
 use CarloNicora\Minimalism\Raw\Models\Discord\Dice;
 use CarloNicora\Minimalism\Raw\Models\Discord\Roll;
 use CarloNicora\Minimalism\Raw\Models\Discord\Session;
@@ -24,6 +27,8 @@ class Index extends AbstractRawModel
             'roll' => Roll::class,
             'dice' => Dice::class,
             'session' => Session::class,
+            'campaign' => Campaign::class,
+            RawCommand::Character->value => Character::class,
         };
 
         $this->redirect(

@@ -2,10 +2,15 @@
 namespace CarloNicora\Minimalism\Raw\Commands;
 
 use CarloNicora\JsonApi\Document;
+use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\ServersDataWriter;
+use CarloNicora\Minimalism\Raw\Data\Objects\Server;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
+use CarloNicora\Minimalism\Raw\Enums\RawError;
+use Exception;
+use RuntimeException;
 
 class CampaignCommand extends AbstractCommand
 {
@@ -16,19 +21,30 @@ class CampaignCommand extends AbstractCommand
     public function execute(
     ): Document
     {
-        if (!$this->request->isGM()){
-            throw new RuntimeException('Only the GM can manage the sessions!');
+        if ($this->request->getServer() !== null){
+            throw new RuntimeException(RawError::CampaignAlreadyInitialised->getMessage());
         }
 
-        if ($this->request->getPayload()->getParameter(PayloadParameter::Command) === 'start') {
-            $this->startSession();
-        } else {
-            $this->endSession();
-        }
+        $name = $this->request->getPayload()->getParameter(PayloadParameter::Name);
+
+        $server = new Server(
+            serverId: $this->request->getPayload()->getGuild()->getId(),
+            gm: $this->request->getPayload()->getUser()->getId(),
+            campaign: $name,
+        );
 
         /** @var ServersDataWriter $writeServer */
         $writeServer = MinimalismObjectsFactory::create(ServersDataWriter::class);
-        $writeServer->upload($this->request->getServer());
+        $writeServer->upload($server);
+
+        $campaignResource = new ResourceObject(
+            type: 'campaign'
+        );
+        $campaignResource->attributes->add('name', $name);
+
+        $this->response->addResource(
+            $campaignResource
+        );
 
         return $this->response;
     }
@@ -47,19 +63,9 @@ class CampaignCommand extends AbstractCommand
             'options' => [
                 [
                     'type' => 3,
-                    'name' => 'command',
-                    'description' => 'Do you want to start or end the session?',
+                    'name' => PayloadParameter::Name->value,
+                    'description' => 'The name of the campaign',
                     'required' => true,
-                    'choices' => [
-                        [
-                            'name' => 'start',
-                            'value' => 'start'
-                        ],
-                        [
-                            'name' => 'end',
-                            'value' => 'end'
-                        ],
-                    ]
                 ],
             ],
         ];

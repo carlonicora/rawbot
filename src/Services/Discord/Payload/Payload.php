@@ -48,14 +48,14 @@ class Payload
     }
 
     /**
-     * @param string $parameterName
+     * @param PayloadParameter $parameterName
      * @return bool
      */
     public function hasParameter(
-        string $parameterName,
+        PayloadParameter $parameterName,
     ): bool
     {
-        return array_key_exists($parameterName, $this->parameters);
+        return array_key_exists($parameterName->value, $this->parameters);
     }
 
     /**

@@ -2,15 +2,15 @@
 namespace CarloNicora\Minimalism\Raw\Models\Discord;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractDiscordModel;
-use CarloNicora\Minimalism\Raw\Commands\DiceCommand;
+use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
 use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
-use CarloNicora\Minimalism\Raw\Views\DiceView;
+use CarloNicora\Minimalism\Raw\Views\CampaignView;
 use Exception;
 
 class Campaign extends AbstractDiscordModel
 {
     /** @var string|null  */
-    protected ?string $view=DiceView::class;
+    protected ?string $view=CampaignView::class;
 
     /**
      * @param array|null $payload
@@ -21,13 +21,13 @@ class Campaign extends AbstractDiscordModel
         ?array $payload
     ): int
     {
-        $request = $this->generateRequest($payload);
-
-        $command = new DiceCommand(
-            request: $request,
-        );
-
         try {
+            $request = $this->generateRequest($payload);
+
+            $command = new CampaignCommand(
+                request: $request,
+            );
+
             $this->document = $command->execute();
         } catch (Exception $e) {
             $this->document = DiscordMessageFactory::generateErrorDocument(description: $e->getMessage());

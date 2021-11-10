@@ -36,4 +36,33 @@ class AbilitiesTable extends AbstractMySqlTable
 
         return $this->functions->runRead();
     }
+
+    /**
+     * @param int $characterId
+     * @param int $settingId
+     * @return array
+     * @throws Exception
+     */
+    public function readByCharacterIdSettingIdExtended(
+        int $characterId,
+        int $settingId,
+    ): array
+    {
+        $this->sql = 'SELECT abilities.abilityId,'
+            . ' abilities.trait,'
+            . ' abilities.fullName,'
+            . ' characterAbilities.specialisation,'
+            . ' characterAbilities.value,'
+            . ' characterAbilities.used'
+            . ' FROM abilities'
+            . ' LEFT JOIN characterAbilities'
+            . ' ON abilities.abilityId=characterAbilities.abilityId'
+            . ' AND characterAbilities.characterId=?'
+            . ' WHERE abilities.settingId=?'
+            . ' ORDER BY abilities.trait,'
+            . ' abilities.fullName;';
+        $this->parameters = ['ii', $characterId, $settingId];
+
+        return $this->functions->runRead();
+    }
 }

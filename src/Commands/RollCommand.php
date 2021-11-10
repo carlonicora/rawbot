@@ -1,6 +1,7 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Commands;
 
+use CarloNicora\JsonApi\Document;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\AbilitiesDataReader;
@@ -18,12 +19,13 @@ use Exception;
 class RollCommand extends AbstractCommand
 {
     /**
-     * @return DiscordInteractionResponseInterface
+     * @return Document
      * @throws Exception
      */
     public function execute(
-    ): DiscordInteractionResponseInterface
+    ): Document
     {
+        /*
         if (!$this->server['inSession']){
             return DiscordMessageFactory::generateError(description: 'You can only roll your abilities during a game session.');
         }
@@ -44,14 +46,12 @@ class RollCommand extends AbstractCommand
 
         $abilityFullName = $abilityName . ($abilitySpecialisation === '/' ? '' : $abilitySpecialisation);
 
-        /** @var AbilitiesDataReader $readAbilities */
         $readAbilities = MinimalismObjectsFactory::create(AbilitiesDataReader::class);
 
         $ability = $readAbilities->byName(
             name: $abilityName
         );
 
-        /** @var CharacterAbilitiesDataReader $readCharacterAbilities */
         $readCharacterAbilities = MinimalismObjectsFactory::create(CharacterAbilitiesDataReader::class);
 
         try {
@@ -72,7 +72,6 @@ class RollCommand extends AbstractCommand
         }
 
         if ($characterAbility['used'] !== 1) {
-            /** @var CharacterAbilitiesDataWriter $writeCharacterAbilities */
             $writeCharacterAbilities = MinimalismObjectsFactory::create(CharacterAbilitiesDataWriter::class);
             $characterAbility['used'] = 1;
 
@@ -165,6 +164,9 @@ class RollCommand extends AbstractCommand
         );
 
         return $this->message;
+        */
+
+        return $this->response;
     }
 
     /**

@@ -8,8 +8,8 @@ use RuntimeException;
 
 class Character extends AbstractDataObject
 {
-    /** @var int  */
-    private int $id;
+    /** @var int|null  */
+    private ?int $id=null;
 
     /** @var int  */
     private int $serverId;
@@ -93,7 +93,7 @@ class Character extends AbstractDataObject
         if ($data !== null) {
             parent::__construct($data);
         } else {
-            $this->id = $id??throw new RuntimeException('Id missing', 412);
+            $this->id = $id;
             $this->serverId = $serverId??throw new RuntimeException('Server Id missing', 412);
             $this->userId = $userId;
             $this->username = $username;
@@ -161,6 +161,15 @@ class Character extends AbstractDataObject
         ];
 
         return array_merge($originalValues, $data);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNew(
+    ): bool
+    {
+        return $this->id === null;
     }
 
     /**

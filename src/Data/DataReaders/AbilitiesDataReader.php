@@ -62,4 +62,22 @@ class AbilitiesDataReader extends AbstractLoader
             parameters: [],
         );
     }
+
+    /**
+     * @param int $characterId
+     * @param int $settingId
+     * @return array
+     */
+    public function byCharacterIdSettingIdExtended(
+        int $characterId,
+        int $settingId,
+    ): array
+    {
+        /** @see AbilitiesTable::readByCharacterIdSettingIdExtended() */
+        return $this->data->read(
+            tableInterfaceClassName: AbilitiesTable::class,
+            functionName: 'readByCharacterIdSettingIdExtended',
+            parameters: [$characterId, $settingId],
+        );
+    }
 }

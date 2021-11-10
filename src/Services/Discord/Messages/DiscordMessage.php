@@ -1,6 +1,7 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Services\Discord\Messages;
 
+use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordFlag;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordEmbedInterface;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordInteractionApplicationCommandCallbackDataInterface;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordInteractionResponseInterface;
@@ -19,6 +20,9 @@ class DiscordMessage implements DiscordInteractionResponseInterface, DiscordMess
 
     /** @var DiscordEmbedInterface[]|null  */
     private ?array $embeds=null;
+
+    /** @var int|null  */
+    private ?int $flags=null;
 
     /**
      * @param int $type
@@ -100,6 +104,16 @@ class DiscordMessage implements DiscordInteractionResponseInterface, DiscordMess
     }
 
     /**
+     * @param DiscordFlag $flag
+     */
+    public function addFlag(
+        DiscordFlag $flag,
+    ): void
+    {
+        $this->flags += $flag->value;
+    }
+
+    /**
      * @return array
      */
     public function export(): array
@@ -113,6 +127,10 @@ class DiscordMessage implements DiscordInteractionResponseInterface, DiscordMess
 
         if ($this->content !== null){
             $interactionApplicationCommandCallbackData['content'] = $this->content;
+        }
+
+        if ($this->flags){
+            $interactionApplicationCommandCallbackData['flags'] = $this->flags;
         }
 
         if ($this->embeds !== null){

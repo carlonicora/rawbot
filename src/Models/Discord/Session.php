@@ -21,13 +21,13 @@ class Session extends AbstractDiscordModel
         ?array $payload,
     ): int
     {
-        $request = $this->generateRequest($payload);
-
-        $command = new SessionCommand(
-            request: $request,
-        );
-
         try {
+            $request = $this->generateRequest($payload);
+
+            $command = new SessionCommand(
+                request: $request,
+            );
+
             $this->document = $command->execute();
         } catch (Exception $e) {
             $this->document = DiscordMessageFactory::generateErrorDocument(description: $e->getMessage());
