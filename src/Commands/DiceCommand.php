@@ -18,8 +18,8 @@ class DiceCommand extends AbstractCommand
     public function execute(
     ): Document
     {
-        $dice = $this->request->getPayload()->getParameter(PayloadParameter::Dice);
-        $bonus = $this->request->getPayload()->getParameter(PayloadParameter::Bonus);
+        $dice = $this->request->getPayload()?->getParameter(PayloadParameter::Dice);
+        $bonus = $this->request->getPayload()?->getParameter(PayloadParameter::Bonus);
 
         [$quantity,$sides] = explode('d', $dice);
 

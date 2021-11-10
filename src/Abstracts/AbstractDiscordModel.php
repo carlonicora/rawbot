@@ -82,7 +82,7 @@ class AbstractDiscordModel extends AbstractModel
                         discordUserId: $payloadObject->getUser()->getId(),
                     );
                 } catch (Exception) {
-                    if (!static::class === Character::class || !$payloadObject->hasParameter(PayloadParameter::Create)) {
+                    if (static::class !== Character::class || !$payloadObject->hasParameter(PayloadParameter::Create)) {
                         throw new ErrorException(RawError::UserWithoutCharacter->getMessage());
                     }
                 }

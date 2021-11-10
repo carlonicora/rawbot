@@ -3,7 +3,6 @@ namespace CarloNicora\Minimalism\Raw\Data\DataReaders;
 
 use CarloNicora\Minimalism\Abstracts\AbstractLoader;
 use CarloNicora\Minimalism\Raw\Data\Databases\Raw\Tables\CharacterAbilitiesTable;
-use CarloNicora\Minimalism\Raw\Data\Databases\Raw\Tables\CharactersTable;
 use CarloNicora\Minimalism\Raw\Data\Objects\CharacterAbility;
 use Exception;
 

@@ -26,8 +26,32 @@ class Payload
 
         if (array_key_exists('options', $payload['data'])){
             foreach ($payload['data']['options'] as $parameter){
+                $this->getOptions($parameter);
+            }
+        }
+    }
+
+    /**
+     * @param array $options
+     */
+    private function getOptions(
+        array $options,
+    ): void
+    {
+        if (array_key_exists('options', $options)){
+            $this->parameters[$options['name']] = true;
+
+            foreach ($options['options'] as $subParameter){
+                $this->getOptions($subParameter);
+            }
+        } else if (array_is_list($options)){
+            foreach ($options as $parameter){
                 $this->parameters[$parameter['name']] = $parameter['value'];
             }
+        } else if (array_key_exists('value', $options)) {
+            $this->parameters[$options['name']] = $options['value'];
+        } else {
+            $this->parameters[$options['name']] = true;
         }
     }
 

@@ -59,7 +59,7 @@ class Ability extends AbstractDataObject
         } else {
             $this->id = $id??throw new RuntimeException('Character Id missing', 412);
             $this->settingId = $settingId??throw new RuntimeException('Ability Id missing', 412);
-            $this->trait = $trait??throw new RuntimeException('Trait missing', 412);;
+            $this->trait = $trait??throw new RuntimeException('Trait missing', 412);
             $this->name = $name??throw new RuntimeException('Name missing', 412);
             $this->fullName = $fullName??throw new RuntimeException('Full name missing', 412);
             $this->canChallenge = $canChallenge;

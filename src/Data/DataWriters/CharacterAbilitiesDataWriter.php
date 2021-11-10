@@ -4,20 +4,19 @@ namespace CarloNicora\Minimalism\Raw\Data\DataWriters;
 use CarloNicora\Minimalism\Abstracts\AbstractLoader;
 use CarloNicora\Minimalism\Raw\Data\Databases\Raw\Tables\CharacterAbilitiesTable;
 use CarloNicora\Minimalism\Raw\Data\Objects\CharacterAbility;
-use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
 
 class CharacterAbilitiesDataWriter extends AbstractLoader
 {
     /**
-     * @param CharacterAbility[] $characterAbilitities
+     * @param CharacterAbility[] $characterAbilities
      */
     public function update(
-        array $characterAbilitities,
+        array $characterAbilities,
     ): void
     {
         $abilities = [];
 
-        foreach ($characterAbilitities as $characterAbility){
+        foreach ($characterAbilities as $characterAbility){
             $abilities[] = $characterAbility->export();
         }
 
@@ -35,6 +34,7 @@ class CharacterAbilitiesDataWriter extends AbstractLoader
     ): void
     {
         /** @see CharacterAbilitiesTable::updateResetUsage() */
+        /** @noinspection UnusedFunctionResultInspection */
         $this->data->run(
             tableInterfaceClassName: CharacterAbilitiesTable::class,
             functionName: 'updateResetUsage',

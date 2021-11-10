@@ -27,11 +27,11 @@ class Setup extends AbstractRawModel
 
         $emptyRequest = new Request();
         $commands = [
+            new CharacterCommand($emptyRequest),
             new CampaignCommand($emptyRequest),
             new DiceCommand($emptyRequest),
             new RollCommand($emptyRequest),
             new SessionCommand($emptyRequest),
-            new CharacterCommand($emptyRequest),
         ];
 
         foreach ($commands as $command) {
@@ -69,7 +69,7 @@ class Setup extends AbstractRawModel
                 ]
             );
 
-            $a = json_decode($apiResponse->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+            json_decode($apiResponse->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
         } catch (GuzzleException $e) {
             throw new RuntimeException($e->getMessage(), 500);
         }

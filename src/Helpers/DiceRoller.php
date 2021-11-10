@@ -32,7 +32,7 @@ class DiceRoller
     {
         try {
             return random_int(1, $diceSides);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return $diceSides / 10 * 4;
         }
     }

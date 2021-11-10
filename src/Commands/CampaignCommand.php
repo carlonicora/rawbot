@@ -25,11 +25,11 @@ class CampaignCommand extends AbstractCommand
             throw new RuntimeException(RawError::CampaignAlreadyInitialised->getMessage());
         }
 
-        $name = $this->request->getPayload()->getParameter(PayloadParameter::Name);
+        $name = $this->request->getPayload()?->getParameter(PayloadParameter::Name);
 
         $server = new Server(
-            serverId: $this->request->getPayload()->getGuild()->getId(),
-            gm: $this->request->getPayload()->getUser()->getId(),
+            serverId: $this->request->getPayload()?->getGuild()->getId(),
+            gm: $this->request->getPayload()?->getUser()->getId(),
             campaign: $name,
         );
 

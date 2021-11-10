@@ -30,7 +30,11 @@ class SessionCommand extends AbstractCommand
             throw new RuntimeException('Only the GM can manage the sessions!');
         }
 
-        if ($this->request->getPayload()->getParameter(PayloadParameter::Command) === 'start') {
+        if ($this->request->getServer() === null){
+            throw new RuntimeException('No Campaign');
+        }
+
+        if ($this->request->getPayload()?->getParameter(PayloadParameter::Command) === 'start') {
             $this->startSession();
         } else {
             $this->endSession();
@@ -50,17 +54,17 @@ class SessionCommand extends AbstractCommand
     private function startSession(
     ): void
     {
-        if ($this->request->getServer()->isInSession()){
+        if ($this->request->getServer()?->isInSession()){
             throw new ErrorException('A session is already running');
         }
 
-        $this->request->getServer()->startSession();
+        $this->request->getServer()?->startSession();
 
         /** @var CharacterAbilitiesDataWriter $writeCharacterAbilities */
         $writeCharacterAbilities = MinimalismObjectsFactory::create(CharacterAbilitiesDataWriter::class);
 
         $writeCharacterAbilities->resetUsage(
-            serverId: $this->request->getServer()->getId(),
+            serverId: $this->request->getServer()?->getId(),
         );
 
         $this->response->addResource(
@@ -76,11 +80,11 @@ class SessionCommand extends AbstractCommand
     private function endSession(
     ): void
     {
-        if (!$this->request->getServer()->isInSession()){
+        if (!$this->request->getServer()?->isInSession()){
             throw new ErrorException('You are not in a session.');
         }
 
-        $this->request->getServer()->endSession();
+        $this->request->getServer()?->endSession();
 
         $resource =new ResourceObject(
             type: RawDocument::SessionEnd->value,
@@ -95,7 +99,7 @@ class SessionCommand extends AbstractCommand
         /** @var CharactersDataWriter $writeCharacter */
         $writeCharacter = MinimalismObjectsFactory::create(CharactersDataWriter::class);
 
-        $characters = $readCharacter->byServerId(serverId: $this->request->getServer()->getId());
+        $characters = $readCharacter->byServerId(serverId: $this->request->getServer()?->getId(), isGm: true);
 
 
         foreach ($characters as $character){

@@ -1,9 +1,11 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Views;
 
+use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Raw\Enums\RawTrait;
 use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
 use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractView;
+use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordColour;
 use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordFlag;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbed;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedField;
@@ -20,9 +22,70 @@ class CharacterView extends AbstractView
     public function exportView(
     ): array
     {
+        if ($this->document->meta->has('list')){
+            $message = $this->buildList(
+                characters: $this->document->resources,
+            );
+        } else {
+            $message = $this->buildSingle(
+                character: $this->document->resources[0],
+            );
+        }
+
+        return $message->export();
+    }
+
+    /**
+     * @param ResourceObject[] $characters
+     * @return DiscordMessage
+     * @throws Exception
+     */
+    private function buildList(
+        array $characters,
+    ): DiscordMessage
+    {
         $message = new DiscordMessage();
 
-        $character = $this->document->resources[0];
+        $embeds = [];
+
+        foreach ($characters ?? [] as $character) {
+            $color = DiscordColour::Grey->value;
+            if (!$character->attributes->get('isNPC')){
+                if ($character->attributes->get('isMe')){
+                    $color = DiscordColour::Red->value;
+                } else {
+                    $color = DiscordColour::Blue->value;
+                }
+            }
+
+            $embeds[] = new DiscordEmbed(
+                title: ($character->attributes->get('isNPC') ? '[NPC]' : '') . $character->attributes->get('name') . ' (_' . $character->attributes->get('shortName') . '_)',
+                description: $character->attributes->get('description')??'',
+                color: $color,
+                footer: DiscordMessageFactory::createFooter(
+                    type: 'Character management'
+                ),
+                thumbnail: ($character->attributes->get('thumbnail') !== null ? new DiscordEmbedThumbnail($character->attributes->get('thumbnail')) : null),
+            );
+        }
+
+        $message->addFlag(DiscordFlag::EPHEMERAL);
+
+        $message->setEmbeds($embeds);
+
+        return $message;
+    }
+
+    /**
+     * @param ResourceObject $character
+     * @return DiscordMessage
+     * @throws Exception
+     */
+    private function buildSingle(
+        ResourceObject $character,
+    ): DiscordMessage
+    {
+        $message = new DiscordMessage();
 
         $fields = [];
 
@@ -52,7 +115,7 @@ class CharacterView extends AbstractView
         $fields[] = new DiscordEmbedField(
             name: 'Additional stats',
             value: 'Bonus points available: ' . $character->attributes->get('bonus') . PHP_EOL
-                . 'Damages: ' . $character->attributes->get('bonus') . ' (_' . $character->attributes->get('lifePoints') . ' life points available_)',
+            . 'Damages: ' . $character->attributes->get('bonus') . ' (_' . $character->attributes->get('lifePoints') . ' life points available_)',
             inline: false
         );
 
@@ -75,6 +138,38 @@ class CharacterView extends AbstractView
 
         $message->addFlag(DiscordFlag::EPHEMERAL);
 
-        return $message->export();
+        return $message;
     }
 }
+
+/*
+ * const lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
+
+await lib.discord.channels['@0.2.0'].messages.create({
+  "channel_id": `${context.params.event.channel_id}`,
+  "content": "",
+  "tts": false,
+  "components": [
+    {
+      "type": 1,
+      "components": [
+        {
+          "style": 1,
+          "label": `Label`,
+          "custom_id": `row_0_button_0`,
+          "disabled": false,
+          "type": 2
+        }
+      ]
+    }
+  ],
+  "embeds": [
+    {
+      "type": "rich",
+      "title": `Title`,
+      "description": `Description`,
+      "color": 0x00FFFF
+    }
+  ]
+});
+ */

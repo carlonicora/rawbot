@@ -34,18 +34,19 @@ class CharactersDataReader extends AbstractLoader
 
     /**
      * @param int $serverId
+     * @param bool $isGM
      * @return Character[]
-     * @throws Exception
      */
     public function byServerId(
         int $serverId,
+        bool $isGM,
     ): array
     {
         /** @see CharactersTable::readByServerId() */
         $recordset = $this->data->read(
             tableInterfaceClassName: CharactersTable::class,
             functionName: 'readByServerId',
-            parameters: [$serverId],
+            parameters: [$serverId, $isGM],
         );
 
         return $this->returnObjectArray(

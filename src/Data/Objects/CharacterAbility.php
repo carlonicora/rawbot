@@ -4,7 +4,6 @@ namespace CarloNicora\Minimalism\Raw\Data\Objects;
 
 use CarloNicora\Minimalism\Abstracts\AbstractDataObject;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
-use CarloNicora\Minimalism\Interfaces\MinimalismObjectInterface;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\AbilitiesDataReader;
 use Exception;
 use RuntimeException;

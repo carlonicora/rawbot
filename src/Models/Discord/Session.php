@@ -24,11 +24,9 @@ class Session extends AbstractDiscordModel
         try {
             $request = $this->generateRequest($payload);
 
-            $command = new SessionCommand(
+            $this->document = (new SessionCommand(
                 request: $request,
-            );
-
-            $this->document = $command->execute();
+            ))->execute();
         } catch (Exception $e) {
             $this->document = DiscordMessageFactory::generateErrorDocument(description: $e->getMessage());
         }

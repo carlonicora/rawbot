@@ -3,10 +3,8 @@ namespace CarloNicora\Minimalism\Raw\Models\Discord;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractDiscordModel;
 use CarloNicora\Minimalism\Raw\Commands\DiceCommand;
-use CarloNicora\Minimalism\Raw\Commands\SessionCommand;
 use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
 use CarloNicora\Minimalism\Raw\Views\DiceView;
-use CarloNicora\Minimalism\Raw\Views\SessionView;
 use Exception;
 
 class Dice extends AbstractDiscordModel
@@ -26,11 +24,9 @@ class Dice extends AbstractDiscordModel
         try {
             $request = $this->generateRequest($payload);
 
-            $command = new DiceCommand(
+            $this->document = (new DiceCommand(
                 request: $request,
-            );
-
-            $this->document = $command->execute();
+            ))->execute();
         } catch (Exception $e) {
             $this->document = DiscordMessageFactory::generateErrorDocument(description: $e->getMessage());
         }

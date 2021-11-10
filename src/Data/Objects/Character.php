@@ -233,7 +233,7 @@ class Character extends AbstractDataObject
      * @return bool
      */
     public function isNPC(
-    ): ?bool
+    ): bool
     {
         return $this->isNPC;
     }

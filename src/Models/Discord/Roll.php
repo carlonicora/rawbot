@@ -2,6 +2,8 @@
 namespace CarloNicora\Minimalism\Raw\Models\Discord;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractDiscordModel;
+use CarloNicora\Minimalism\Raw\Commands\RollCommand;
+use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
 use Exception;
 
 class Roll extends AbstractDiscordModel
@@ -15,7 +17,16 @@ class Roll extends AbstractDiscordModel
         ?array $payload
     ): int
     {
-        $this->initialise($payload);
+        try {
+            $request = $this->generateRequest($payload);
+
+            $this->document = (new RollCommand(
+                request: $request,
+            ))->execute();
+        } catch (Exception $e) {
+            $this->document = DiscordMessageFactory::generateErrorDocument(description: $e->getMessage());
+        }
+
 
         return 200;
     }

@@ -24,11 +24,9 @@ class Campaign extends AbstractDiscordModel
         try {
             $request = $this->generateRequest($payload);
 
-            $command = new CampaignCommand(
+            $this->document = (new CampaignCommand(
                 request: $request,
-            );
-
-            $this->document = $command->execute();
+            ))->execute();
         } catch (Exception $e) {
             $this->document = DiscordMessageFactory::generateErrorDocument(description: $e->getMessage());
         }

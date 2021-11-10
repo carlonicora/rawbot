@@ -50,15 +50,26 @@ class CharactersTable extends AbstractMySqlTable
 
     /**
      * @param int $serverId
+     * @param bool $isGM
      * @return array
      * @throws Exception
      */
     public function readByServerId(
         int $serverId,
+        bool $isGM,
     ): array
     {
-        $this->sql = 'SELECT * FROM characters WHERE serverId=?;';
+        $this->sql = 'SELECT *'
+            . ' FROM characters'
+            . ' WHERE serverId=?';
         $this->parameters =['i', $serverId];
+
+        if (!$isGM) {
+            $this->sql .= ' AND isNPC=?';
+            $this->parameters[0] .= 'i';
+            $this->parameters[] = 0;
+        }
+        $this->sql .= ' ORDER BY isNPC, name, shortName;';
 
         return $this->functions->runRead();
     }

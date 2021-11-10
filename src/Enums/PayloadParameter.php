@@ -14,4 +14,9 @@ enum PayloadParameter: string
     case Description='description';
     case Thumbnail='thumbnail';
     case Create='create';
+    case List='list';
+    case Set='set';
+    case Update='update';
+    case Detail='detail';
+    case PlayingCharacter='pc';
 }

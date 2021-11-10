@@ -3,8 +3,8 @@ namespace CarloNicora\Minimalism\Raw\Factories;
 
 use CarloNicora\JsonApi\Document;
 use CarloNicora\JsonApi\Objects\ResourceObject;
+use CarloNicora\Minimalism\Raw\Enums\CriticalRoll;
 use CarloNicora\Minimalism\Raw\Exceptions\ErrorException;
-use CarloNicora\Minimalism\Raw\Helpers\DiceRoller;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordEmbedAuthorInterface;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordEmbedFooterInterface;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordEmbedImageInterface;
@@ -157,21 +157,22 @@ class DiscordMessageFactory
     }
 
     /**
-     * @param int $type
+     * @param CriticalRoll $type
      * @return DiscordEmbedImageInterface|null
      */
     public static function createRollImage(
-        int $type
+        CriticalRoll $type
     ): ?DiscordEmbedImageInterface
     {
-        if ($type === DiceRoller::CRITICAL_NONE){
+        $url = match($type) {
+            CriticalRoll::Success => 'https://media.giphy.com/media/Z9KdRxSrTcDHGE6Ipf/giphy.gif',
+            CriticalRoll::Failure => 'https://vignette.wikia.nocookie.net/kingsway-role-playing-group/images/a/ab/A7c1d56e7cdb84ee25e6769d9c7b9910--tabletop-rpg-tabletop-games.jpg',
+            CriticalRoll::None => null,
+        };
+
+        if ($url === null){
             return null;
         }
-
-        $url = match($type) {
-            DiceRoller::CRITICAL_SUCCESS => 'https://media.giphy.com/media/Z9KdRxSrTcDHGE6Ipf/giphy.gif',
-            DiceRoller::CRITICAL_FAILURE => 'https://vignette.wikia.nocookie.net/kingsway-role-playing-group/images/a/ab/A7c1d56e7cdb84ee25e6769d9c7b9910--tabletop-rpg-tabletop-games.jpg',
-        };
 
         return new DiscordEmbedImage(
             url: $url
