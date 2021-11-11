@@ -3,5 +3,10 @@ namespace CarloNicora\Minimalism\Raw\Enums;
 
 enum RawCommand: string
 {
-    Case Character='character';
+    case Character='character';
+    case Ability='ability';
+    case Roll='roll';
+    case Dice='dice';
+    case Campaign='campaign';
+    case Session='session';
 }

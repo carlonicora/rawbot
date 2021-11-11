@@ -5,6 +5,7 @@ use CarloNicora\JsonApi\Document;
 use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawDocument;
 use CarloNicora\Minimalism\Raw\Helpers\DiceRoller;
 use Exception;
@@ -59,7 +60,7 @@ class DiceCommand extends AbstractCommand
     ): array
     {
         return [
-            'name' => 'dice',
+            'name' => RawCommand::Dice->value,
             'description' => 'Roll one or more dices.',
             'options' => [
                 [

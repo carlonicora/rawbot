@@ -2,15 +2,15 @@
 namespace CarloNicora\Minimalism\Raw\Models\Discord;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractDiscordModel;
-use CarloNicora\Minimalism\Raw\Commands\RollCommand;
+use CarloNicora\Minimalism\Raw\Commands\AbilityCommand;
 use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
-use CarloNicora\Minimalism\Raw\Views\RollView;
+use CarloNicora\Minimalism\Raw\Views\CharacterView;
 use Exception;
 
-class Roll extends AbstractDiscordModel
+class Ability extends AbstractDiscordModel
 {
     /** @var string|null  */
-    protected ?string $view=RollView::class;
+    protected ?string $view=CharacterView::class;
 
     /**
      * @param array|null $payload
@@ -24,7 +24,7 @@ class Roll extends AbstractDiscordModel
         try {
             $request = $this->generateRequest($payload);
 
-            $this->document = (new RollCommand(
+            $this->document = (new AbilityCommand(
                 request: $request,
             ))->execute();
         } catch (Exception $e) {

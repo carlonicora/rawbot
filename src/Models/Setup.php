@@ -2,6 +2,7 @@
 namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
+use CarloNicora\Minimalism\Raw\Commands\AbilityCommand;
 use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
 use CarloNicora\Minimalism\Raw\Commands\CharacterCommand;
 use CarloNicora\Minimalism\Raw\Commands\DiceCommand;
@@ -27,11 +28,12 @@ class Setup extends AbstractRawModel
 
         $emptyRequest = new Request();
         $commands = [
-            new CharacterCommand($emptyRequest),
-            new CampaignCommand($emptyRequest),
-            new DiceCommand($emptyRequest),
+            //new AbilityCommand($emptyRequest),
+            //new CharacterCommand($emptyRequest),
+            //new CampaignCommand($emptyRequest),
+            //new DiceCommand($emptyRequest),
             new RollCommand($emptyRequest),
-            new SessionCommand($emptyRequest),
+            //new SessionCommand($emptyRequest),
         ];
 
         foreach ($commands as $command) {
@@ -69,7 +71,11 @@ class Setup extends AbstractRawModel
                 ]
             );
 
-            json_decode($apiResponse->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+            $remaining = (int)$apiResponse->getHeader('X-RateLimit-Remaining');
+            if ($remaining === 0){
+                $waitFor = (int)$apiResponse->getHeader('X-RateLimit-Reset-After');
+                sleep($waitFor+1);
+            }
         } catch (GuzzleException $e) {
             throw new RuntimeException($e->getMessage(), 500);
         }

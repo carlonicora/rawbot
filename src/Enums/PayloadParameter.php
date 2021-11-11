@@ -19,4 +19,7 @@ enum PayloadParameter: string
     case Update='update';
     case Detail='detail';
     case PlayingCharacter='pc';
+    case Value='value';
+    case Ability='ability';
+    case Specialisation='specialisation';
 }

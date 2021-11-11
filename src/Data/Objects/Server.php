@@ -1,10 +1,13 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Data\Objects;
 
+use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Abstracts\AbstractDataObject;
+use CarloNicora\Minimalism\Raw\Interfaces\ResurceGenerationInterface;
+use Exception;
 use RuntimeException;
 
-class Server extends AbstractDataObject
+class Server extends AbstractDataObject implements ResurceGenerationInterface
 {
     /** @var int|null  */
     private ?int $id=null;
@@ -200,5 +203,25 @@ class Server extends AbstractDataObject
     ): void
     {
         $this->inSession = false;
+    }
+
+    /**
+     * @return ResourceObject
+     * @throws Exception
+     */
+    public function generateResourceObject(): ResourceObject
+    {
+        $response = new ResourceObject(
+            type: 'character',
+            id: $this->id,
+        );
+
+        $response->attributes->add('settingId', $this->settingId);
+        $response->attributes->add('serverId', $this->serverId);
+        $response->attributes->add('gm', $this->gm);
+        $response->attributes->add('campign', $this->campaign);
+        $response->attributes->add('inSession', $this->inSession);
+
+        return $response;
     }
 }

@@ -11,6 +11,7 @@ use CarloNicora\Minimalism\Raw\Data\DataWriters\CharacterAbilitiesDataWriter;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\CharactersDataWriter;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\ServersDataWriter;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawDocument;
 use CarloNicora\Minimalism\Raw\Exceptions\ErrorException;
 use CarloNicora\Minimalism\Raw\Helpers\DiceRoller;
@@ -188,7 +189,7 @@ class SessionCommand extends AbstractCommand
     ): array
     {
         return [
-            'name' => 'session',
+            'name' => RawCommand::Session->value,
             'description' => 'Manage a session. (Only the GM is allowed to use this)',
             'options' => [
                 [

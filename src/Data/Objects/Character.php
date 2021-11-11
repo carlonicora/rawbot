@@ -2,11 +2,14 @@
 
 namespace CarloNicora\Minimalism\Raw\Data\Objects;
 
+use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Abstracts\AbstractDataObject;
 use CarloNicora\Minimalism\Raw\Enums\RawTrait;
+use CarloNicora\Minimalism\Raw\Interfaces\ResurceGenerationInterface;
+use Exception;
 use RuntimeException;
 
-class Character extends AbstractDataObject
+class Character extends AbstractDataObject implements ResurceGenerationInterface
 {
     /** @var int|null  */
     private ?int $id=null;
@@ -479,5 +482,34 @@ class Character extends AbstractDataObject
             RawTrait::Mind => $this->mind,
             RawTrait::Spirit => $this->spirit,
         };
+    }
+
+    /**
+     * @return ResourceObject
+     * @throws Exception
+     */
+    public function generateResourceObject(): ResourceObject
+    {
+        $response = new ResourceObject(
+            type: 'character',
+            id: $this->id,
+        );
+
+        $response->attributes->add('serverId', $this->serverId);
+        $response->attributes->add('userId', $this->userId);
+        $response->attributes->add('isNPC', $this->isNPC);
+        $response->attributes->add('username', $this->username);
+        $response->attributes->add('shortName', $this->shortname);
+        $response->attributes->add('name', $this->name);
+        $response->attributes->add('body', $this->body);
+        $response->attributes->add('mind', $this->mind);
+        $response->attributes->add('spirit', $this->spirit);
+        $response->attributes->add('bonus', $this->bonus);
+        $response->attributes->add('damages', $this->damages);
+        $response->attributes->add('description', $this->description);
+        $response->attributes->add('automaticallyAcceptChallenges', $this->automaticallyAcceptChallenges);
+        $response->attributes->add('thumbnail', $this->thumbnail);
+
+        return $response;
     }
 }

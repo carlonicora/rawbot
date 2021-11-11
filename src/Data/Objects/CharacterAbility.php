@@ -2,13 +2,15 @@
 
 namespace CarloNicora\Minimalism\Raw\Data\Objects;
 
+use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Abstracts\AbstractDataObject;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\AbilitiesDataReader;
+use CarloNicora\Minimalism\Raw\Interfaces\ResurceGenerationInterface;
 use Exception;
 use RuntimeException;
 
-class CharacterAbility extends AbstractDataObject
+class CharacterAbility extends AbstractDataObject implements ResurceGenerationInterface
 {
     /** @var int  */
     private int $characterId;
@@ -218,5 +220,25 @@ class CharacterAbility extends AbstractDataObject
     ): void
     {
         $this->hasBeenUpdated = false;
+    }
+
+    /**
+     * @return ResourceObject
+     * @throws Exception
+     */
+    public function generateResourceObject(): ResourceObject
+    {
+        $response = new ResourceObject(
+            type: 'character',
+        );
+
+        $response->attributes->add('characterId', $this->characterId);
+        $response->attributes->add('abilityId', $this->abilityId);
+        $response->attributes->add('specialisation', $this->specialisation);
+        $response->attributes->add('value', $this->value);
+        $response->attributes->add('hasBeenUsed', $this->hasBeenUsed);
+        $response->attributes->add('hasBeenUpdated', $this->hasBeenUpdated);
+
+        return $response;
     }
 }

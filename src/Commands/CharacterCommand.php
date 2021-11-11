@@ -182,6 +182,22 @@ class CharacterCommand extends AbstractCommand
             }
         }
 
+        $this->response->addResource(
+            $this->getCharacterResource(
+                updated: $updated,
+            )
+        );
+    }
+
+    /**
+     * @param bool $updated
+     * @return ResourceObject
+     * @throws Exception
+     */
+    public function getCharacterResource(
+        bool $updated,
+    ): ResourceObject
+    {
         $character = new ResourceObject(
             type: RawDocument::Character->value,
             id: $this->request->getCharacter()?->getId(),
@@ -232,9 +248,7 @@ class CharacterCommand extends AbstractCommand
             $character->relationship(RawTrait::from($ability['trait'])->value)->resourceLinkage->add($abilityResource);
         }
 
-        $this->response->addResource(
-            $character
-        );
+        return $character;
     }
 
     /**

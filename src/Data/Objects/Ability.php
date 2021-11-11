@@ -1,11 +1,14 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Data\Objects;
 
+use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Abstracts\AbstractDataObject;
 use CarloNicora\Minimalism\Raw\Enums\RawTrait;
+use CarloNicora\Minimalism\Raw\Interfaces\ResurceGenerationInterface;
+use Exception;
 use RuntimeException;
 
-class Ability extends AbstractDataObject
+class Ability extends AbstractDataObject implements ResurceGenerationInterface
 {
     /** @var int  */
     private int $id;
@@ -176,5 +179,27 @@ class Ability extends AbstractDataObject
     ): bool
     {
         return $this->definesInitiative;
+    }
+
+    /**
+     * @return ResourceObject
+     * @throws Exception
+     */
+    public function generateResourceObject(): ResourceObject
+    {
+        $response = new ResourceObject(
+            type: 'ability',
+            id: $this->id,
+        );
+
+        $response->attributes->add('settingId', $this->settingId);
+        $response->attributes->add('trait', $this->trait->value);
+        $response->attributes->add('name', $this->name);
+        $response->attributes->add('fullName', $this->fullName);
+        $response->attributes->add('canChallenge', $this->canChallenge);
+        $response->attributes->add('canBeOpposed', $this->canBeOpposed);
+        $response->attributes->add('definesInitiative', $this->definesInitiative);
+
+        return $response;
     }
 }

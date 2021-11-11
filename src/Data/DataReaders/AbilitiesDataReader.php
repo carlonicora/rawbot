@@ -50,16 +50,21 @@ class AbilitiesDataReader extends AbstractLoader
     }
 
     /**
-     * @return array
+     * @return Ability[]
      */
     public function all(
     ): array
     {
         /** @see AbilitiesTable::all() */
-        return $this->data->read(
+        $recorset = $this->data->read(
             tableInterfaceClassName: AbilitiesTable::class,
             functionName: 'all',
             parameters: [],
+        );
+
+        return $this->returnObjectArray(
+            recordset: $recorset,
+            objectType: Ability::class,
         );
     }
 

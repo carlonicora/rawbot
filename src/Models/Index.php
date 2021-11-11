@@ -2,6 +2,7 @@
 namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
+use CarloNicora\Minimalism\Raw\Models\Discord\Ability;
 use CarloNicora\Minimalism\Raw\Models\Discord\Campaign;
 use CarloNicora\Minimalism\Raw\Models\Discord\Character;
 use CarloNicora\Minimalism\Raw\Models\Discord\Dice;
@@ -24,11 +25,12 @@ class Index extends AbstractRawModel
         $this->validate(payload: $payload);
 
         $model = match ($payload['data']['name']) {
-            'roll' => Roll::class,
-            'dice' => Dice::class,
-            'session' => Session::class,
-            'campaign' => Campaign::class,
+            RawCommand::Roll->value => Roll::class,
+            RawCommand::Dice->value => Dice::class,
+            RawCommand::Session->value => Session::class,
+            RawCommand::Campaign->value => Campaign::class,
             RawCommand::Character->value => Character::class,
+            RawCommand::Ability->value => Ability::class,
         };
 
         $this->redirect(

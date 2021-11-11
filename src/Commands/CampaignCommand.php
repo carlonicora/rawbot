@@ -8,6 +8,7 @@ use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\ServersDataWriter;
 use CarloNicora\Minimalism\Raw\Data\Objects\Server;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawError;
 use Exception;
 use RuntimeException;
@@ -58,7 +59,7 @@ class CampaignCommand extends AbstractCommand
     ): array
     {
         return [
-            'name' => 'campaign',
+            'name' => RawCommand::Campaign->value,
             'description' => 'Create a campaign in this server. (The user running this command will become the GM)',
             'options' => [
                 [
