@@ -130,7 +130,7 @@ class BonusView extends AbstractView
             $this->bonus->attributes->get('roll') .
             (($this->bonus->attributes->get('critical')===CriticalRoll::Success->value) ? '**' : '') .
             PHP_EOL .
-            $this->ability->attributes->get('value') . PHP_EOL .
+            $this->characterAbility->attributes->get('value') . PHP_EOL .
             $this->character->attributes->get($this->ability->attributes->get('trait')) . PHP_EOL .
             '___' . PHP_EOL .
             '**' . $this->bonus->attributes->get('bonus') . '**';

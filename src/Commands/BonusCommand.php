@@ -103,7 +103,7 @@ class BonusCommand extends AbstractCommand
             $response = $readCharacterAbility->byCharacterIdAbilityIdSpecialisation(
                 characterId: $this->request->getCharacter()?->getId(),
                 abilityId: $this->request->getPayload()?->getParameter(PayloadParameter::Ability),
-                specialisation: $this->request->getPayload()?->getParameter(PayloadParameter::Specialisation),
+                specialisation: $this->request->getPayload()?->getParameter(PayloadParameter::Specialisation)??'/',
             );
 
             if ($response->getValue() === 0) {
@@ -160,8 +160,8 @@ class BonusCommand extends AbstractCommand
     {
         $characterAbility = $this->getCharacterAbility();
 
-        if ($characterAbility->hasBeenUpdated()){
-            throw new RuntimeException('The ability you have tried to update has not been inreased during the last session.');
+        if (!$characterAbility->hasBeenUpdated()){
+            throw new RuntimeException('The ability you have tried to update has not been increased during the last session.');
         }
 
         $this->addBonus(-1);

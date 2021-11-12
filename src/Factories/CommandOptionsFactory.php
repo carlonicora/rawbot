@@ -111,7 +111,7 @@ class CommandOptionsFactory
     ): ApplicationCommandOptionInterface
     {
         return new ApplicationCommandOption(
-            type: ApplicationCommandOptionType::INTEGER,
+            type: ApplicationCommandOptionType::STRING,
             name:PayloadParameter::Name->value,
             description: $description,
             isRequired: $isRequired,

@@ -158,23 +158,44 @@ class CharacterCommand extends AbstractCommand
     {
         $updated = false;
 
-        if (($newCharacter = $this->request->getPayload()?->getParameter(PayloadParameter::Create)) !== null) {
+        /** @noinspection RepetitiveMethodCallsInspection */
+        if ($this->request->getPayload()?->hasParameter(PayloadParameter::Create) && $this->request->getPayload()?->hasParameter(PayloadParameter::Name)) {
+            /** @var CharactersDataReader $readCharacter */
+            $readCharacter = MinimalismObjectsFactory::create(CharactersDataReader::class);
+
+            $character = null;
+            try {
+                $character = $readCharacter->byServerIdShortname(
+                    serverId: $this->request->getServer()?->getId(),
+                    shortname: $this->request->getPayload()?->getParameter(PayloadParameter::Name),
+                );
+            } catch (Exception) {
+            }
+
+            if ($character !== null) {
+                throw new RuntimeException(RawError::CharacterAlreadyExisting->getMessage());
+            }
+
             $this->request->setCharacter(
                 new Character(
                     serverId: $this->request->getServer()?->getId(),
                     userId: $this->request->getPayload()?->getUser()->getId(),
-                    shortname: $newCharacter,
+                    shortname: $this->request->getPayload()?->getParameter(PayloadParameter::Name),
                 )
             );
+
+            if ($this->request->isGM()){
+                $this->request->getCharacter()?->setAsNPC();
+            }
             $updated = true;
         }
 
-        $updated = $updated || $this->updateField(PayloadParameter::Name);
-        $updated = $updated || $this->updateField(PayloadParameter::Description);
-        $updated = $updated || $this->updateField(PayloadParameter::Thumbnail);
-        $updated = $updated || $this->updateField(PayloadParameter::Body);
-        $updated = $updated || $this->updateField(PayloadParameter::Mind);
-        $updated = $updated || $this->updateField(PayloadParameter::Spirit);
+        $updated = $this->updateField(PayloadParameter::Name) || $updated;
+        $updated = $this->updateField(PayloadParameter::Description) || $updated;
+        $updated = $this->updateField(PayloadParameter::Thumbnail) || $updated;
+        $updated = $this->updateField(PayloadParameter::Body) || $updated;
+        $updated = $this->updateField(PayloadParameter::Mind) || $updated;
+        $updated = $this->updateField(PayloadParameter::Spirit) || $updated;
 
         if ($updated) {
             /** @var CharactersDataWriter $writeCharacter */
