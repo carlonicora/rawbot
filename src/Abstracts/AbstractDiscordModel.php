@@ -88,16 +88,27 @@ class AbstractDiscordModel extends AbstractModel
                 }
             }
 
-            if ($isGM && $payloadObject->hasParameter(PayloadParameter::Character)) {
+            $characterShortName = null;
+            if ($payloadObject->hasParameter(PayloadParameter::Character)) {
+                $characterShortName = $payloadObject->getParameter(PayloadParameter::Character);
+            } elseif ($payloadObject->hasParameter(PayloadParameter::PlayingCharacter)){
+                $characterShortName = $payloadObject->getParameter(PayloadParameter::PlayingCharacter);
+            }
+
+            if (!$isGM && $characterShortName !== null){
+                throw new RuntimeException('Only the GM can manage non player characters!');
+            }
+
+            if ($isGM && $characterShortName !== null) {
                 if ($character === null) {
                     $character = $this->readCharacter->byServerIdShortname(
                         serverId: $server->getId(),
-                        shortname: $payloadObject->getParameter(PayloadParameter::Character),
+                        shortname: $characterShortName,
                     );
                 } else {
                     $npc = $this->readCharacter->byServerIdShortname(
                         serverId: $server->getId(),
-                        shortname: $payloadObject->getParameter(PayloadParameter::Character),
+                        shortname: $characterShortName,
                     );
                 }
             }

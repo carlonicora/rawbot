@@ -15,6 +15,10 @@ use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawDocument;
 use CarloNicora\Minimalism\Raw\Exceptions\ErrorException;
 use CarloNicora\Minimalism\Raw\Helpers\DiceRoller;
+use CarloNicora\Minimalism\Raw\Services\Discord\ApplicationCommands\ApplicationCommand;
+use CarloNicora\Minimalism\Raw\Services\Discord\ApplicationCommands\ApplicationCommandOption;
+use CarloNicora\Minimalism\Raw\Services\Discord\Enums\ApplicationCommandOptionType;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 use Exception;
 use RuntimeException;
 
@@ -35,7 +39,7 @@ class SessionCommand extends AbstractCommand
             throw new RuntimeException('No Campaign');
         }
 
-        if ($this->request->getPayload()?->getParameter(PayloadParameter::Command) === 'start') {
+        if ($this->request->getPayload()?->hasParameter(PayloadParameter::Start)) {
             $this->startSession();
         } else {
             $this->endSession();
@@ -43,7 +47,7 @@ class SessionCommand extends AbstractCommand
 
         /** @var ServersDataWriter $writeServer */
         $writeServer = MinimalismObjectsFactory::create(ServersDataWriter::class);
-        $writeServer->upload($this->request->getServer());
+        $writeServer->upload($this->request->getServer()??throw new RuntimeException('No campaign'));
 
         return $this->response;
     }
@@ -100,8 +104,7 @@ class SessionCommand extends AbstractCommand
         /** @var CharactersDataWriter $writeCharacter */
         $writeCharacter = MinimalismObjectsFactory::create(CharactersDataWriter::class);
 
-        $characters = $readCharacter->byServerId(serverId: $this->request->getServer()?->getId(), isGm: true);
-
+        $characters = $readCharacter->byServerId(serverId: $this->request->getServer()?->getId(), isGM: true);
 
         foreach ($characters as $character){
             $characterResource = null;
@@ -182,33 +185,33 @@ class SessionCommand extends AbstractCommand
 
     /**
      * @param int|null $serverId
-     * @return array
+     * @return ApplicationCommandInterface
      */
     public function getDefinition(
         ?int $serverId=null,
-    ): array
+    ): ApplicationCommandInterface
     {
-        return [
-            'name' => RawCommand::Session->value,
-            'description' => 'Manage a session. (Only the GM is allowed to use this)',
-            'options' => [
-                [
-                    'type' => 3,
-                    'name' => 'command',
-                    'description' => 'Do you want to start or end the session?',
-                    'required' => true,
-                    'choices' => [
-                        [
-                            'name' => 'start',
-                            'value' => 'start'
-                        ],
-                        [
-                            'name' => 'end',
-                            'value' => 'end'
-                        ],
-                    ]
-                ],
-            ],
-        ];
+        $response = new ApplicationCommand(
+            id: RawCommand::Session->value,
+            applicationId: '??',
+            name: RawCommand::Session->value,
+            description: '[GM only] Manage a game session',
+        );
+
+        $response->addOption(
+            new ApplicationCommandOption(
+                type: ApplicationCommandOptionType::SUB_COMMAND,
+                name: PayloadParameter::Start->value,
+                description: '[GM only] Start a new gaming session',
+            )
+        );
+        $response->addOption(
+            new ApplicationCommandOption(
+                type: ApplicationCommandOptionType::SUB_COMMAND,
+                name: PayloadParameter::End->value,
+                description: '[GM only] End the current gaming session',
+            ));
+
+        return $response;
     }
 }

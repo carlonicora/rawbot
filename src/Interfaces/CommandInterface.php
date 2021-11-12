@@ -3,6 +3,7 @@ namespace CarloNicora\Minimalism\Raw\Interfaces;
 
 use CarloNicora\JsonApi\Document;
 use CarloNicora\Minimalism\Raw\Objects\Request;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 
 interface CommandInterface
 {
@@ -22,9 +23,9 @@ interface CommandInterface
 
     /**
      * @param int|null $serverId
-     * @return array
+     * @return ApplicationCommandInterface
      */
     public function getDefinition(
         ?int $serverId=null,
-    ): array;
+    ): ApplicationCommandInterface;
 }

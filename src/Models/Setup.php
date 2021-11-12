@@ -3,12 +3,15 @@ namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
 use CarloNicora\Minimalism\Raw\Commands\AbilityCommand;
+use CarloNicora\Minimalism\Raw\Commands\BonusCommand;
 use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
 use CarloNicora\Minimalism\Raw\Commands\CharacterCommand;
 use CarloNicora\Minimalism\Raw\Commands\DiceCommand;
 use CarloNicora\Minimalism\Raw\Commands\RollCommand;
 use CarloNicora\Minimalism\Raw\Commands\SessionCommand;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Objects\Request;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -24,15 +27,32 @@ class Setup extends AbstractRawModel
     {
         $token = $this->getToken();
 
-        //$currentCommands = $this->getPublishedCommands(token: $token);
+        $currentCommands = $this->getPublishedCommands(token: $token);
+
+        foreach ($currentCommands ?? [] as $command){
+            if (!in_array($command['name'], [
+                RawCommand::Ability->value,
+                RawCommand::Roll->value,
+                RawCommand::Character->value,
+                RawCommand::Campaign->value,
+                RawCommand::Session->value,
+                RawCommand::Bonus->value,
+            ], true)
+            ) {
+                $this->deleteCommand(
+                    token: $token,
+                    commandId: $command['id'],
+                );
+            }
+        }
 
         $emptyRequest = new Request();
         $commands = [
             //new AbilityCommand($emptyRequest),
-            //new CharacterCommand($emptyRequest),
+            //new BonusCommand($emptyRequest),
             //new CampaignCommand($emptyRequest),
-            //new DiceCommand($emptyRequest),
-            new RollCommand($emptyRequest),
+            //new CharacterCommand($emptyRequest),
+            //new RollCommand($emptyRequest),
             //new SessionCommand($emptyRequest),
         ];
 
@@ -46,14 +66,37 @@ class Setup extends AbstractRawModel
         return 200;
     }
 
+    private function deleteCommand(
+        string $token,
+        string $commandId,
+    ): void
+    {
+        $client = new Client(['base_uri' => $this->raw->getCommandEndpoint() . '/' . $commandId]);
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+        ];
+
+        try {
+            $apiResponse = $client->request(
+                method: 'DELETE',
+                options: [
+                    'headers' => $headers,
+                ]
+            );
+        } catch (GuzzleException $e) {
+            throw new RuntimeException($e->getMessage(), 500);
+        }
+    }
+
     /**
      * @param string $token
-     * @param array $definition
+     * @param ApplicationCommandInterface $definition
      * @throws Exception
      */
     private function addCommand(
         string $token,
-        array $definition,
+        ApplicationCommandInterface $definition,
     ): void
     {
         $client = new Client(['base_uri' => $this->raw->getCommandEndpoint()]);
@@ -67,7 +110,7 @@ class Setup extends AbstractRawModel
                 method: 'POST',
                 options: [
                     'headers' => $headers,
-                    'body' => json_encode($definition, JSON_THROW_ON_ERROR)
+                    'body' => json_encode($definition->export(), JSON_THROW_ON_ERROR)
                 ]
             );
 

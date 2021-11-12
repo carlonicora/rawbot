@@ -1,7 +1,7 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Services\Discord\Enums;
 
-enum DiscordCommandOptionType: int
+enum ApplicationCommandOptionType: int
 {
     case SUB_COMMAND=1;
     case SUB_COMMAND_GROUP=2;
@@ -13,4 +13,15 @@ enum DiscordCommandOptionType: int
     case ROLE=8;
     case MENTIONABLE=9;
     case NUMBER=10;
+
+    /**
+     * @return bool
+     */
+    public function isCommand(): bool
+    {
+        return match ($this) {
+            self::SUB_COMMAND, self::SUB_COMMAND_GROUP => true,
+            default => false,
+        };
+    }
 }

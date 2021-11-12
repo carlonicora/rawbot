@@ -119,6 +119,23 @@ class CharacterView extends AbstractView
             inline: false
         );
 
+        if ($character->attributes->get('bonus') > 0) {
+            $updateableAbilitiesDescription = 'You haven\'t updated any ability just yet, so you can\'t use `/bonus up` on any of your abilities';
+            if (array_key_exists('updatedAbilities', $character->relationships)) {
+                $updateableAbilitiesDescription = 'You have updated the following abilities (for which you can use `/bonus up` to increase their values by 1 point by using one of your bonuses:' . PHP_EOL;
+
+                    foreach ($character->relationship('updatedAbilities')->resourceLinkage->resources ?? [] as $updateableAbility){
+                        $updateableAbilitiesDescription .= ' * ' . $updateableAbility->attributes->get('name') . PHP_EOL;
+                    }
+            }
+
+            $fields[] = new DiscordEmbedField(
+                name: 'Updateable Abilities',
+                value: $updateableAbilitiesDescription,
+                inline: false
+            );
+        }
+
         $description = $character->attributes->get('description')??'';
         if ($character->meta->get('updated') === true){
             $description .= PHP_EOL . '___' . PHP_EOL . ' _Your character has been successfully updated_ ' . PHP_EOL . '___' . PHP_EOL;
@@ -141,35 +158,3 @@ class CharacterView extends AbstractView
         return $message;
     }
 }
-
-/*
- * const lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
-
-await lib.discord.channels['@0.2.0'].messages.create({
-  "channel_id": `${context.params.event.channel_id}`,
-  "content": "",
-  "tts": false,
-  "components": [
-    {
-      "type": 1,
-      "components": [
-        {
-          "style": 1,
-          "label": `Label`,
-          "custom_id": `row_0_button_0`,
-          "disabled": false,
-          "type": 2
-        }
-      ]
-    }
-  ],
-  "embeds": [
-    {
-      "type": "rich",
-      "title": `Title`,
-      "description": `Description`,
-      "color": 0x00FFFF
-    }
-  ]
-});
- */

@@ -3,9 +3,9 @@ namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Models\Discord\Ability;
+use CarloNicora\Minimalism\Raw\Models\Discord\Bonus;
 use CarloNicora\Minimalism\Raw\Models\Discord\Campaign;
 use CarloNicora\Minimalism\Raw\Models\Discord\Character;
-use CarloNicora\Minimalism\Raw\Models\Discord\Dice;
 use CarloNicora\Minimalism\Raw\Models\Discord\Roll;
 use CarloNicora\Minimalism\Raw\Models\Discord\Session;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
@@ -26,11 +26,11 @@ class Index extends AbstractRawModel
 
         $model = match ($payload['data']['name']) {
             RawCommand::Roll->value => Roll::class,
-            RawCommand::Dice->value => Dice::class,
             RawCommand::Session->value => Session::class,
             RawCommand::Campaign->value => Campaign::class,
             RawCommand::Character->value => Character::class,
             RawCommand::Ability->value => Ability::class,
+            RawCommand::Bonus->value => Bonus::class,
         };
 
         $this->redirect(

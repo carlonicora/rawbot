@@ -12,6 +12,7 @@ enum RawError
     case CampaignNotInitialised;
     case InvalidTraitTraitValue;
     case InvalidThumbnailLink;
+    case CharacterAlreadyExisting;
 
     /**
      * @return string
@@ -29,6 +30,7 @@ enum RawError
             self::InvalidTraitTraitValue => 'The value of the trait is not valid. It should be between 1 and 20',
             self::InvalidThumbnailLink => 'The link to the thumbnail is not valid. It should start with `http` and end in `.jpg` or `.png`',
             self::InSession => 'You are already in a game session',
+            self::CharacterAlreadyExisting => 'A character for your user or a character with the same shortname already exists',
         };
     }
 }

@@ -22,4 +22,10 @@ enum PayloadParameter: string
     case Value='value';
     case Ability='ability';
     case Specialisation='specialisation';
+    case Up='up';
+    case Roll='roll';
+    case Assign='assign';
+    case Start='start';
+    case End='end';
+    case Type='type';
 }

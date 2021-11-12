@@ -161,6 +161,16 @@ class CharacterAbility extends AbstractDataObject implements ResurceGenerationIn
     /**
      * @param int $delta
      */
+    public function addValue(
+        int $delta
+    ): void
+    {
+        $this->value += $delta;
+    }
+
+    /**
+     * @param int $delta
+     */
     public function increaseValue(
         int $delta
     ): void

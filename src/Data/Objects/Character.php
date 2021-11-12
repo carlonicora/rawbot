@@ -500,7 +500,7 @@ class Character extends AbstractDataObject implements ResurceGenerationInterface
         $response->attributes->add('isNPC', $this->isNPC);
         $response->attributes->add('username', $this->username);
         $response->attributes->add('shortName', $this->shortname);
-        $response->attributes->add('name', $this->name);
+        $response->attributes->add('name', $this->name??$this->shortname);
         $response->attributes->add('body', $this->body);
         $response->attributes->add('mind', $this->mind);
         $response->attributes->add('spirit', $this->spirit);

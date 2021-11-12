@@ -16,7 +16,7 @@ class CharacterAbilitiesDataWriter extends AbstractLoader
     {
         $abilities = [];
 
-        foreach ($characterAbilities as $characterAbility){
+        foreach ($characterAbilities as $characterAbility) {
             $abilities[] = $characterAbility->export();
         }
 
