@@ -10,6 +10,9 @@ use CarloNicora\Minimalism\Raw\Data\Objects\Server;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawError;
+use CarloNicora\Minimalism\Raw\Factories\CommandOptionsFactory;
+use CarloNicora\Minimalism\Raw\Services\Discord\ApplicationCommands\ApplicationCommand;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 use Exception;
 use RuntimeException;
 
@@ -52,23 +55,20 @@ class CampaignCommand extends AbstractCommand
 
     /**
      * @param int|null $serverId
-     * @return array
+     * @return ApplicationCommandInterface
      */
     public function getDefinition(
         ?int $serverId=null,
-    ): array
+    ): ApplicationCommandInterface
     {
-        return [
-            'name' => RawCommand::Campaign->value,
-            'description' => 'Create a campaign in this server. (The user running this command will become the GM)',
-            'options' => [
-                [
-                    'type' => 3,
-                    'name' => PayloadParameter::Name->value,
-                    'description' => 'The name of the campaign',
-                    'required' => true,
-                ],
-            ],
-        ];
+        $response = new ApplicationCommand(
+            id: RawCommand::Campaign->value,
+            applicationId: '??',
+            name: RawCommand::Campaign->value,
+            description: 'Create a campaign in this server. (The user running this command will become the GM)',
+        );
+        $response->addOption(CommandOptionsFactory::getNameSubOption('The name of the campaign', true));
+
+        return $response;
     }
 }

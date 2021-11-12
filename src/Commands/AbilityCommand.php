@@ -4,14 +4,15 @@ namespace CarloNicora\Minimalism\Raw\Commands;
 use CarloNicora\JsonApi\Document;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
-use CarloNicora\Minimalism\Raw\Data\DataReaders\AbilitiesDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\CharacterAbilitiesDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\CharacterAbilitiesDataWriter;
 use CarloNicora\Minimalism\Raw\Data\Objects\CharacterAbility;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawError;
-use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordCommandOptionType;
+use CarloNicora\Minimalism\Raw\Factories\CommandOptionsFactory;
+use CarloNicora\Minimalism\Raw\Services\Discord\ApplicationCommands\ApplicationCommand;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 use Exception;
 use RuntimeException;
 
@@ -68,53 +69,25 @@ class AbilityCommand extends AbstractCommand
 
     /**
      * @param int|null $serverId
-     * @return array
+     * @return ApplicationCommandInterface
      * @throws Exception
      */
     public function getDefinition(
         ?int $serverId=null,
-    ): array
+    ): ApplicationCommandInterface
     {
-        /** @var AbilitiesDataReader $readAbility */
-        $readAbility = MinimalismObjectsFactory::create(AbilitiesDataReader::class);
-        $abilities = $readAbility->all();
+        $response = new ApplicationCommand(
+            id: RawCommand::Ability->value,
+            applicationId: '??',
+            name: RawCommand::Ability->value,
+            description: 'Set a value of one of your abilities',
+        );
 
-        $abilitiesList = [];
-        foreach ($abilities ?? [] as $ability){
-            $abilitiesList[] = [
-                'name' => $ability->getFullName() . ' (' . $ability->getTrait()->value . ')',
-                'value' => $ability->getId(),
-            ];
-        }
+        $response->addOption(CommandOptionsFactory::getAbilityListSubOption());
+        $response->addOption(CommandOptionsFactory::getValueSubOption('The new value of the ability'));
+        $response->addOption(CommandOptionsFactory::getAbilitySpecialisationSubOption());
+        $response->addOption(CommandOptionsFactory::getCharacterSelectionSubOption());
 
-        return [
-            'type' => DiscordCommandOptionType::SUB_COMMAND->value,
-            'name' => RawCommand::Ability->value,
-            'description' => 'Set a value of one of your abilities',
-            'options' => [
-                [
-                    'type' => DiscordCommandOptionType::INTEGER->value,
-                    'name' => PayloadParameter::Value->value,
-                    'description' => 'The new value of the ability',
-                    'required' => true,
-                ],[
-                    'type' => DiscordCommandOptionType::INTEGER->value,
-                    'name' => PayloadParameter::Ability->value,
-                    'description' => 'The ability to set',
-                    'required' => true,
-                    'choices' => $abilitiesList,
-                ],[
-                    'type' => DiscordCommandOptionType::STRING->value,
-                    'name' => PayloadParameter::Character->value,
-                    'description' => '[GM Only] Select the npc identifier',
-                    'required' => false,
-                ],[
-                    'type' => DiscordCommandOptionType::STRING->value,
-                    'name' => PayloadParameter::Specialisation->value,
-                    'description' => 'The ability specialisation (if any)',
-                    'required' => false,
-                ],
-            ],
-        ];
+        return $response;
     }
 }

@@ -6,6 +6,7 @@ use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\AbilitiesDataReader;
+use CarloNicora\Minimalism\Raw\Data\DataReaders\CharacterAbilitiesDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\CharactersDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\CharactersDataWriter;
 use CarloNicora\Minimalism\Raw\Data\Objects\Character;
@@ -14,7 +15,11 @@ use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawDocument;
 use CarloNicora\Minimalism\Raw\Enums\RawError;
 use CarloNicora\Minimalism\Raw\Enums\RawTrait;
-use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordCommandOptionType;
+use CarloNicora\Minimalism\Raw\Factories\CommandOptionsFactory;
+use CarloNicora\Minimalism\Raw\Services\Discord\ApplicationCommands\ApplicationCommand;
+use CarloNicora\Minimalism\Raw\Services\Discord\ApplicationCommands\ApplicationCommandOption;
+use CarloNicora\Minimalism\Raw\Services\Discord\Enums\ApplicationCommandOptionType;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 use Exception;
 use RuntimeException;
 
@@ -36,6 +41,10 @@ class CharacterCommand extends AbstractCommand
             !$this->request->getPayload()?->hasParameter(PayloadParameter::Create) &&
             !$this->request->getPayload()?->hasParameter(PayloadParameter::List)){
             throw new RuntimeException(RawError::CharacterNotSpecified->getMessage());
+        }
+
+        if ($this->request->getCharacter() !== null && $this->request->getPayload()?->hasParameter(PayloadParameter::Create)){
+            throw new RuntimeException(RawError::CharacterAlreadyExisting->getMessage());
         }
 
         if ($this->request->getPayload()?->hasParameter(PayloadParameter::List)){
@@ -219,7 +228,6 @@ class CharacterCommand extends AbstractCommand
         $character->attributes->add('damages', $this->request->getCharacter()?->getDamages() ?? 0);
         $character->attributes->add('lifePoints', 30 + ($this->request->getCharacter()?->getBody() ?? 0) - ($this->request->getCharacter()?->getDamages() ?? 0));
 
-
         foreach (RawTrait::cases() as $trait) {
             $character->attributes->add($trait->value, $this->request->getCharacter()?->getTraitValue($trait));
         }
@@ -246,6 +254,10 @@ class CharacterCommand extends AbstractCommand
                 value: in_array($ability['used'], [null, 0, false], true),
             );
             $character->relationship(RawTrait::from($ability['trait'])->value)->resourceLinkage->add($abilityResource);
+
+            if ($ability['wasUpdated'] === 1){
+                $character->relationship('updatedAbilities')->resourceLinkage->add($abilityResource);
+            }
         }
 
         return $character;
@@ -253,121 +265,31 @@ class CharacterCommand extends AbstractCommand
 
     /**
      * @param int|null $serverId
-     * @return array
+     * @return ApplicationCommandInterface
      */
     public function getDefinition(
         ?int $serverId=null,
-    ): array
+    ): ApplicationCommandInterface
     {
-        return [
-            'name' => RawCommand::Character->value,
-            'description' => 'Manage your character',
-            'options' => [
-                [
-                    'type' => DiscordCommandOptionType::SUB_COMMAND->value,
-                    'name' => PayloadParameter::List->value,
-                    'description' => 'List all the characters of a campaign',
-                ],
-                [
-                    'type' => DiscordCommandOptionType::SUB_COMMAND_GROUP->value,
-                    'name' => PayloadParameter::Detail->value,
-                    'description' => 'Get the details of your character or of an NPC',
-                    'options' => [
-                        [
-                            'type' => DiscordCommandOptionType::SUB_COMMAND->value,
-                            'name' => PayloadParameter::Character->value,
-                            'description' => '[GM only] Get the details of a non player character',
-                            'options' => [
-                                [
-                                    'type' => DiscordCommandOptionType::STRING->value,
-                                    'name' => PayloadParameter::Character->value,
-                                    'description' => 'The player first name or the npc short name',
-                                    'required' => true,
-                                ],
-                            ],
-                        ],[
-                            'type' => DiscordCommandOptionType::SUB_COMMAND->value,
-                            'name' => PayloadParameter::PlayingCharacter->value,
-                            'description' => 'Get the details of your character',
-                        ],
-                    ],
-                ],[
-                    'name' => PayloadParameter::Create->value,
-                    'description' => 'Create a new character',
-                    'type' => DiscordCommandOptionType::SUB_COMMAND_GROUP->value,
-                    'options' => [
-                        [
-                            'type' => DiscordCommandOptionType::SUB_COMMAND->value,
-                            'name' => PayloadParameter::Set->value,
-                            'description' => 'The player first name or the npc short name',
-                            'options' => [
-                                [
-                                    'type' => DiscordCommandOptionType::STRING->value,
-                                    'name' => PayloadParameter::Name->value,
-                                    'description' => 'The player first name or the npc short name',
-                                    'required' => true,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'name' => PayloadParameter::Update->value,
-                    'description' => 'Update the information about your character',
-                    'type' => DiscordCommandOptionType::SUB_COMMAND_GROUP->value,
-                    'options' => [
-                        [
-                            'type' => DiscordCommandOptionType::SUB_COMMAND->value,
-                            'name' => PayloadParameter::Set->value,
-                            'description' => 'The player first name or the npc short name',
-                            'options' => [
-                                [
-                                    'type' => 3,
-                                    'name' => PayloadParameter::Character->value,
-                                    'description' => '[GM only] Specify the name of the non player character',
-                                    'required' => false,
-                                ],[
-                                    'type' => 3,
-                                    'name' => PayloadParameter::Name->value,
-                                    'description' => 'Change the name of your character',
-                                    'required' => false,
-                                ],[
-                                    'type' => 3,
-                                    'name' => PayloadParameter::Description->value,
-                                    'description' => 'Change the description of your character',
-                                    'required' => false,
-                                ],[
-                                    'type' => 3,
-                                    'name' => PayloadParameter::Thumbnail->value,
-                                    'description' => 'Change the thumbnail of your character. You need to use a valid URL to an image (NOT A WEB PAGE)',
-                                    'required' => false,
-                                ],[
-                                    'type' => 4,
-                                    'name' => PayloadParameter::Body->value,
-                                    'description' => 'Change the body trait value of your character (between 1 and 20)',
-                                    'required' => false,
-                                    'min_value' => 1,
-                                    'max_value' => 20,
-                                ],[
-                                    'type' => 4,
-                                    'name' => PayloadParameter::Mind->value,
-                                    'description' => 'Change the mind trait value of your character (between 1 and 20)',
-                                    'required' => false,
-                                    'min_value' => 1,
-                                    'max_value' => 20,
-                                ],[
-                                    'type' => 4,
-                                    'name' => PayloadParameter::Spirit->value,
-                                    'description' => 'Change the spirit trait value of your character (between 1 and 20)',
-                                    'required' => false,
-                                    'min_value' => 1,
-                                    'max_value' => 20,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $response = new ApplicationCommand(
+            id: RawCommand::Character->value,
+            applicationId: '??',
+            name: RawCommand::Character->value,
+            description: 'Manage your character',
+        );
+
+        $response->addOption(
+            new ApplicationCommandOption(
+                type: ApplicationCommandOptionType::SUB_COMMAND,
+                name: PayloadParameter::List->value,
+                description: 'List all the characters of a campaign',
+            )
+        );
+
+        $response->addOption(CommandOptionsFactory::getCharacterDetailsCommand());
+        $response->addOption(CommandOptionsFactory::getCharacterCreationCommand());
+        $response->addOption(CommandOptionsFactory::getCharacterVariablesCommand());
+
+        return $response;
     }
 }

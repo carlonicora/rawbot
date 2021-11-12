@@ -5,16 +5,18 @@ use CarloNicora\JsonApi\Document;
 use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
-use CarloNicora\Minimalism\Raw\Data\DataReaders\AbilitiesDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\CharacterAbilitiesDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\CharacterAbilitiesDataWriter;
 use CarloNicora\Minimalism\Raw\Data\Objects\CharacterAbility;
 use CarloNicora\Minimalism\Raw\Enums\CriticalRoll;
 use CarloNicora\Minimalism\Raw\Enums\PayloadParameter;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
+use CarloNicora\Minimalism\Raw\Enums\RawDocument;
 use CarloNicora\Minimalism\Raw\Enums\RawError;
+use CarloNicora\Minimalism\Raw\Factories\CommandOptionsFactory;
 use CarloNicora\Minimalism\Raw\Helpers\DiceRoller;
-use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordCommandOptionType;
+use CarloNicora\Minimalism\Raw\Services\Discord\ApplicationCommands\ApplicationCommand;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 use Exception;
 use RuntimeException;
 
@@ -29,6 +31,11 @@ class RollCommand extends AbstractCommand
     {
         if ($this->request->getServer() === null){
             throw new RuntimeException(RawError::CampaignAlreadyInitialised->getMessage());
+        }
+
+        if ($this->request->getPayload()?->hasParameter(PayloadParameter::Dice)) {
+            $this->rollDice();
+            return $this->response;
         }
 
         if (!$this->request->getServer()->isInSession()){
@@ -87,7 +94,7 @@ class RollCommand extends AbstractCommand
         }
 
         $rollObject = new ResourceObject(
-            type: 'roll',
+            type: RawDocument::Roll->value,
         );
         $rollObject->relationship('character')->resourceLinkage->add($this->request->getCharacter()->generateResourceObject());
         $rollObject->relationship('characterAbility')->resourceLinkage->add($characterAbility->generateResourceObject());
@@ -106,53 +113,64 @@ class RollCommand extends AbstractCommand
     }
 
     /**
+     * @throws Exception
+     */
+    private function rollDice(
+    ): void
+    {
+        $dice = $this->request->getPayload()?->getParameter(PayloadParameter::Dice);
+        $bonus = $this->request->getPayload()?->getParameter(PayloadParameter::Bonus);
+
+        [$quantity,$sides] = explode('d', $dice);
+
+        if (!is_int($quantity) || !is_int($sides)){
+            throw new RuntimeException('Wrong dice');
+        }
+
+        $total = 0;
+
+        for ($round = 1; $round <= $quantity; $round++){
+            $result = DiceRoller::simpleRoll($sides);
+
+            $total += $result;
+
+            $diceResource = new ResourceObject(
+                type: RawDocument::Dice->value,
+                id: $round,
+            );
+            $diceResource->attributes->add('type', 'd' . $sides);
+            $diceResource->attributes->add('roll', $result);
+            $this->response->addResource($diceResource);
+        }
+
+        if ($bonus !== null){
+            $this->response->meta->add('bonus', $bonus);
+            $total += (int)$bonus;
+        }
+
+        $this->response->meta->add('result', $total);
+        $this->response->meta->add('dice', $dice);
+    }
+
+    /**
      * @param int|null $serverId
-     * @return array
+     * @return ApplicationCommandInterface
      * @throws Exception
      */
     public function getDefinition(
         ?int $serverId=null,
-    ): array
+    ): ApplicationCommandInterface
     {
-        /** @var AbilitiesDataReader $readAbility */
-        $readAbility = MinimalismObjectsFactory::create(AbilitiesDataReader::class);
-        $abilities = $readAbility->all();
+        $response = new ApplicationCommand(
+            id: RawCommand::Roll->value,
+            applicationId: '??',
+            name: RawCommand::Roll->value,
+            description: 'Roll an ability or a dice',
+        );
 
-        $abilitiesList = [];
-        foreach ($abilities ?? [] as $ability){
-            $abilitiesList[] = [
-                'name' => $ability->getFullName() . ' (' . $ability->getTrait()->value . ')',
-                'value' => $ability->getId(),
-            ];
-        }
+        $response->addOption(CommandOptionsFactory::getRollDiceCommand());
+        $response->addOption(CommandOptionsFactory::getRollAbilityCommand());
 
-        return [
-            'name' => RawCommand::Roll->value,
-            'description' => 'roll an ability or a dice',
-            'options' => [
-                [
-                    'type' => DiscordCommandOptionType::INTEGER->value,
-                    'name' => PayloadParameter::Ability->value,
-                    'description' => 'The name of the ability you want to use.',
-                    'required' => true,
-                    'choices' => $abilitiesList,
-                ],[
-                    'type' => DiscordCommandOptionType::STRING->value,
-                    'name' => PayloadParameter::Character->value,
-                    'description' => '[GM Only] Select the npc identifier',
-                    'required' => false,
-                ],[
-                    'type' => DiscordCommandOptionType::STRING->value,
-                    'name' => PayloadParameter::Specialisation->value,
-                    'description' => 'The ability specialisation (if any)',
-                    'required' => false,
-                ],[
-                    'type' => DiscordCommandOptionType::STRING->value,
-                    'name' => PayloadParameter::Bonus->value,
-                    'description' => 'Advantage or disadvantage to the roll',
-                    'required' => false,
-                ],
-            ],
-        ];
+        return $response;
     }
 }
