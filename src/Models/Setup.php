@@ -2,13 +2,7 @@
 namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
-use CarloNicora\Minimalism\Raw\Commands\AbilityCommand;
-use CarloNicora\Minimalism\Raw\Commands\BonusCommand;
-use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
-use CarloNicora\Minimalism\Raw\Commands\CharacterCommand;
-use CarloNicora\Minimalism\Raw\Commands\DiceCommand;
 use CarloNicora\Minimalism\Raw\Commands\RollCommand;
-use CarloNicora\Minimalism\Raw\Commands\SessionCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Objects\Request;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
@@ -78,6 +72,7 @@ class Setup extends AbstractRawModel
         ];
 
         try {
+            /** @noinspection PhpUnusedLocalVariableInspection */
             $apiResponse = $client->request(
                 method: 'DELETE',
                 options: [

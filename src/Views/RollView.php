@@ -31,6 +31,11 @@ class RollView extends AbstractView
         return $message->export();
     }
 
+    /**
+     * @param ResourceObject $roll
+     * @return DiscordMessage
+     * @throws Exception
+     */
     private function rollAbility(
         ResourceObject $roll,
     ): DiscordMessage

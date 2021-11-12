@@ -218,7 +218,7 @@ class CommandOptionsFactory
             description: 'Create a new character',
         );
 
-        $response->addOption(self::getNameSubOption('An identifier for the player (your first name) or the non-player character', true));
+        $response->addOption(self::getNameSubOption('An identifier for the player (your first name) or the non-player character'));
 
         return $response;
     }

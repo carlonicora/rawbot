@@ -6,7 +6,6 @@ use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Factories\MinimalismObjectsFactory;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractCommand;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\AbilitiesDataReader;
-use CarloNicora\Minimalism\Raw\Data\DataReaders\CharacterAbilitiesDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataReaders\CharactersDataReader;
 use CarloNicora\Minimalism\Raw\Data\DataWriters\CharactersDataWriter;
 use CarloNicora\Minimalism\Raw\Data\Objects\Character;
@@ -183,7 +182,7 @@ class CharacterCommand extends AbstractCommand
             if ($this->request->getCharacter()?->isNew()) {
                 $this->request->setCharacter(
                     $writeCharacter->insert(
-                        character: $this->request->getCharacter()
+                        character: $this->request->getCharacter()??throw new RuntimeException('error here')
                     )
                 );
             } else {
