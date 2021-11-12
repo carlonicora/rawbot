@@ -10,4 +10,5 @@ enum RawCommand: string
     case Campaign='campaign';
     case Session='session';
     case Bonus='bonus';
+    case Initiative='initiative';
 }

@@ -36,7 +36,8 @@ class CharacterAbilitiesTable extends AbstractMySqlTable
         string $specialisation,
     ): array
     {
-        $this->sql = 'SELECT * FROM characterAbilities WHERE characterId=? AND abilityId=? AND specialisation=?;';
+        $this->sql = 'SELECT *'
+            . ' FROM characterAbilities WHERE characterId=? AND abilityId=? AND specialisation=?;';
         $this->parameters = ['iis', $characterId, $abilityId, $specialisation];
 
         return $this->functions->runRead();
@@ -68,8 +69,33 @@ class CharacterAbilitiesTable extends AbstractMySqlTable
         int $characterId,
     ): array
     {
-        $this->sql = 'SELECT * FROM characterAbilities WHERE characterId=? AND used=?;';
+        $this->sql = 'SELECT *'
+            . ' FROM characterAbilities WHERE characterId=? AND used=?;';
         $this->parameters = ['ii', $characterId, 1];
+
+        return $this->functions->runRead();
+    }
+
+    /**
+     * @param int $characterId
+     * @return array
+     * @throws Exception
+     */
+    public function readBestCharacterInitiativeAbility(
+        int $characterId,
+    ): array
+    {
+        $this->sql = 'SELECT'
+            . ' characterAbilities.*,'
+            . ' abilities.trait,'
+            . ' abilities.fullName'
+            . ' FROM characterAbilities'
+            . ' JOIN abilities ON characterAbilities.abilityId=abilities.abilityId'
+            . ' WHERE abilities.definesInitiative=?'
+            . ' AND characterAbilities.characterId=?'
+            . ' ORDER BY characterAbilities.value DESC'
+            . ' LIMIT 0,1;';
+        $this->parameters = ['ii', 1, $characterId];
 
         return $this->functions->runRead();
     }

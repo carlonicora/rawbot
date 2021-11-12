@@ -4,6 +4,7 @@ namespace CarloNicora\Minimalism\Raw\Models;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
 use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
 use CarloNicora\Minimalism\Raw\Commands\CharacterCommand;
+use CarloNicora\Minimalism\Raw\Commands\InitiativeCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Objects\Request;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
@@ -32,6 +33,7 @@ class Setup extends AbstractRawModel
                 RawCommand::Campaign->value,
                 RawCommand::Session->value,
                 RawCommand::Bonus->value,
+                RawCommand::Initiative->value,
             ], true)
             ) {
                 $this->deleteCommand(
@@ -45,8 +47,9 @@ class Setup extends AbstractRawModel
         $commands = [
             //new AbilityCommand($emptyRequest),
             //new BonusCommand($emptyRequest),
-            new CampaignCommand($emptyRequest),
-            new CharacterCommand($emptyRequest),
+            //new CampaignCommand($emptyRequest),
+            //new CharacterCommand($emptyRequest),
+            new InitiativeCommand($emptyRequest),
             //new RollCommand($emptyRequest),
             //new SessionCommand($emptyRequest),
         ];

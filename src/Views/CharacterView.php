@@ -63,7 +63,7 @@ class CharacterView extends AbstractView
                 description: $character->attributes->get('description')??'',
                 color: $color,
                 footer: DiscordMessageFactory::createFooter(
-                    type: 'Character management'
+                    type: 'Character'
                 ),
                 thumbnail: ($character->attributes->get('thumbnail') !== null ? new DiscordEmbedThumbnail($character->attributes->get('thumbnail')) : null),
             );
@@ -146,7 +146,7 @@ class CharacterView extends AbstractView
                 title: $character->attributes->get('name'),
                 description: $description,
                 footer: DiscordMessageFactory::createFooter(
-                    type: 'Character management'
+                    type: 'Character'
                 ),
                 thumbnail: ($character->attributes->get('thumbnail') !== null ? new DiscordEmbedThumbnail($character->attributes->get('thumbnail')) : null),
                 fields: $fields,

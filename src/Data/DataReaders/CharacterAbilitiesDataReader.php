@@ -54,4 +54,23 @@ class CharacterAbilitiesDataReader extends AbstractLoader
             objectType: CharacterAbility::class,
         );
     }
+
+    /**
+     * @param int $characterId
+     * @return array
+     * @throws Exception
+     */
+    public function readBestInitiativeAbility(
+        int $characterId,
+    ): array
+    {
+        /** @see CharacterAbilitiesTable::readBestCharacterInitiativeAbility() */
+        $recordset = $this->data->read(
+            tableInterfaceClassName: CharacterAbilitiesTable::class,
+            functionName: 'readBestCharacterInitiativeAbility',
+            parameters: [$characterId],
+        );
+
+        return $this->returnSingleValue($recordset);
+    }
 }

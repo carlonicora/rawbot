@@ -30,7 +30,7 @@ class SessionView extends AbstractView
                     description: 'It\'s time to **stop the chattering** and **get ready to roll**!' . PHP_EOL
                     . 'The session is officially started. You can now `/roll` your abilities when needed!',
                     footer: DiscordMessageFactory::createFooter(
-                        type: 'Session management'
+                        type: 'Session'
                     ),
                     image: DiscordMessageFactory::createImage(
                         url: 'https://media.giphy.com/media/zf8yrM8nVERvW/source.gif'
@@ -43,7 +43,7 @@ class SessionView extends AbstractView
                     title: 'That\'s a wrap!',
                     description: 'This is the end of tonight\'s session! I hope you enjoyed!',
                     footer: DiscordMessageFactory::createFooter(
-                        type: 'Session management'
+                        type: 'Session'
                     ),
                     image: new DiscordEmbedImage('https://media.giphy.com/media/lD76yTC5zxZPG/giphy.gif'),
                 )
@@ -74,7 +74,7 @@ class SessionView extends AbstractView
                     title: $characterResource->attributes->get('name'),
                     description: $characterMessage,
                     footer: DiscordMessageFactory::createFooter(
-                        type: 'Session management'
+                        type: 'Session'
                     ),
                     thumbnail: ($characterResource->attributes->get('thumbnail') !== null ? new DiscordEmbedThumbnail($characterResource->attributes->get('thumbnail')) : null),
                 );

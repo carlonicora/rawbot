@@ -82,7 +82,7 @@ class BonusView extends AbstractView
                 description: $description,
                 color: DiscordColour::Blue->value,
                 footer: DiscordMessageFactory::createFooter(
-                    type: 'Bonus management'
+                    type: 'Bonus'
                 ),
                 image: new DiscordEmbedImage('https://media.giphy.com/media/mlTGpQTEnbHPy/giphy.gif'),
                 thumbnail: new DiscordEmbedThumbnail($this->character->attributes->get('thumbnail')),
@@ -105,7 +105,7 @@ class BonusView extends AbstractView
                 . 'you have updated ' . $this->character->attributes->get('name') . '\'s ' . $this->ability->attributes->get('fullName') . ($this->characterAbility->attributes->get('specialisation')==='/' ? '' : '/' . $this->characterAbility->attributes->get('specialisation')) . ' ability by **one** point.',
                 color: DiscordColour::Blue->value,
                 footer: DiscordMessageFactory::createFooter(
-                    type: 'Bonus management'
+                    type: 'Bonus'
                 ),
                 image: new DiscordEmbedImage('https://media.giphy.com/media/qUDenOaWmXImQ/giphy.gif'),
                 thumbnail: new DiscordEmbedThumbnail($this->character->attributes->get('thumbnail')),
@@ -167,7 +167,7 @@ class BonusView extends AbstractView
                 description: $description,
                 color: $color,
                 footer: DiscordMessageFactory::createFooter(
-                    type: 'Bonus management'
+                    type: 'Bonus'
                 ),
                 image: new DiscordEmbedImage($image),
                 thumbnail: new DiscordEmbedThumbnail($this->character->attributes->get('thumbnail')),

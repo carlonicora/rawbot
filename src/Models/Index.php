@@ -6,6 +6,7 @@ use CarloNicora\Minimalism\Raw\Models\Discord\Ability;
 use CarloNicora\Minimalism\Raw\Models\Discord\Bonus;
 use CarloNicora\Minimalism\Raw\Models\Discord\Campaign;
 use CarloNicora\Minimalism\Raw\Models\Discord\Character;
+use CarloNicora\Minimalism\Raw\Models\Discord\Initiative;
 use CarloNicora\Minimalism\Raw\Models\Discord\Roll;
 use CarloNicora\Minimalism\Raw\Models\Discord\Session;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
@@ -31,6 +32,7 @@ class Index extends AbstractRawModel
             RawCommand::Character->value => Character::class,
             RawCommand::Ability->value => Ability::class,
             RawCommand::Bonus->value => Bonus::class,
+            RawCommand::Initiative->value => Initiative::class,
         };
 
         $this->redirect(

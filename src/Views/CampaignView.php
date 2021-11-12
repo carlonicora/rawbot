@@ -22,7 +22,7 @@ class CampaignView extends AbstractView
                 title: 'Your campaign is ready to go!',
                 description: 'Your campaign `' . $this->document->resources[0]->attributes->get('name') . '` is ready. You can now invite your players or just planning your non player characters!',
                 footer: DiscordMessageFactory::createFooter(
-                    type: 'Campaign management'
+                    type: 'Campaign'
                 ),
                 image: DiscordMessageFactory::createImage('https://media.giphy.com/media/SXNvIUIDidBdOq9ndX/giphy.gif'),
             )

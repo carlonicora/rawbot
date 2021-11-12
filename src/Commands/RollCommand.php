@@ -30,7 +30,7 @@ class RollCommand extends AbstractCommand
     ): Document
     {
         if ($this->request->getServer() === null){
-            throw new RuntimeException(RawError::CampaignAlreadyInitialised->getMessage());
+            throw new RuntimeException(RawError::CampaignNotInitialised->getMessage());
         }
 
         if ($this->request->getPayload()?->hasParameter(PayloadParameter::Dice)) {
