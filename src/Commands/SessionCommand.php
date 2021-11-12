@@ -114,11 +114,7 @@ class SessionCommand extends AbstractCommand
             $character->addBonus(3);
 
             if (!$character->isNPC()) {
-                $characterResource = new ResourceObject(
-                    type: 'characterAdvancement',
-                    id: $character->getId(),
-                );
-                $characterResource->attributes->add('name', $character->getName() ?? $character->getShortname());
+                $characterResource = $character->generateResourceObject();
                 $characterResource->meta->add('bonus', 3);
                 $characterResource->meta->add('totalBonus', $character->getBonus());
             }
