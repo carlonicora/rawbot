@@ -2,8 +2,6 @@
 namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
-use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
-use CarloNicora\Minimalism\Raw\Commands\CharacterCommand;
 use CarloNicora\Minimalism\Raw\Commands\InitiativeCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Objects\Request;
