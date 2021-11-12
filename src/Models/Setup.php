@@ -52,7 +52,7 @@ class Setup extends AbstractRawModel
             //new BonusCommand($emptyRequest),
             //new CampaignCommand($emptyRequest),
             //new CharacterCommand($emptyRequest),
-            //new RollCommand($emptyRequest),
+            new RollCommand($emptyRequest),
             //new SessionCommand($emptyRequest),
         ];
 

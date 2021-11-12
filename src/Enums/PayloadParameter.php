@@ -3,7 +3,7 @@ namespace CarloNicora\Minimalism\Raw\Enums;
 
 enum PayloadParameter: string
 {
-    case Character='npc';
+    case Character='character';
     case Command='command';
     case Dice='dice';
     case Bonus='bonus';
@@ -18,7 +18,6 @@ enum PayloadParameter: string
     case Set='set';
     case Update='update';
     case Detail='detail';
-    case PlayingCharacter='pc';
     case Value='value';
     case Ability='ability';
     case Specialisation='specialisation';

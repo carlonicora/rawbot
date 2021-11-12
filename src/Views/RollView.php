@@ -1,7 +1,9 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Views;
 
+use CarloNicora\JsonApi\Objects\ResourceObject;
 use CarloNicora\Minimalism\Raw\Enums\CriticalRoll;
+use CarloNicora\Minimalism\Raw\Enums\RawDocument;
 use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
 use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractView;
 use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordColour;
@@ -20,9 +22,21 @@ class RollView extends AbstractView
     public function exportView(
     ): array
     {
+        if (count($this->document->resources) > 1 || $this->document->resources[0]->type === RawDocument::Dice->value){
+            $message = $this->rollDice($this->document->resources);
+        } else {
+            $message = $this->rollAbility($this->document->resources[0]);
+        }
+
+        return $message->export();
+    }
+
+    private function rollAbility(
+        ResourceObject $roll,
+    ): DiscordMessage
+    {
         $message = new DiscordMessage();
 
-        $roll = $this->document->resources[0];
         $ability = $roll->relationship('ability')->resourceLinkage->resources[0];
         $characterAbility = $roll->relationship('characterAbility')->resourceLinkage->resources[0];
         $character = $roll->relationship('character')->resourceLinkage->resources[0];
@@ -87,6 +101,57 @@ class RollView extends AbstractView
             )
         );
 
-        return $message->export();
+        return $message;
+    }
+
+    /**
+     * @param ResourceObject[] $rolls
+     * @return DiscordMessage
+     * @throws Exception
+     */
+    private function rollDice(
+        array $rolls,
+    ): DiscordMessage
+    {
+        $message = new DiscordMessage();
+
+        $textReference = '';
+        $textValues = '';
+
+        foreach ($rolls as $diceResource){
+            $textReference .= $diceResource->attributes->get('type') . PHP_EOL;
+            $textValues .= $diceResource->attributes->get('roll') . PHP_EOL;
+        }
+
+        if ($this->document->meta->has('bonus')){
+            $textReference .= 'Bonus ' . PHP_EOL;
+            $textValues .= $this->document->meta->get('bonus') . PHP_EOL;
+        }
+
+        $textReference .= ' ' . PHP_EOL . '**Total**';
+        $textValues .= ' ' . PHP_EOL . '**' . $this->document->meta->get('result') . '**';
+
+        $message->addEmbed(
+            new DiscordEmbed(
+                title: $this->document->meta->get('dice') . ' Dice Roll',
+                footer: DiscordMessageFactory::createFooter(
+                    type: 'Dice Roll'
+                ),
+                fields: [
+                    new DiscordEmbedField(
+                        name: 'Dice',
+                        value: $textReference,
+                        inline: true,
+                    ),
+                    new DiscordEmbedField(
+                        name: 'Value',
+                        value: $textValues,
+                        inline: true,
+                    ),
+                ]
+            )
+        );
+
+        return $message;
     }
 }

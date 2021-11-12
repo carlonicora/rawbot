@@ -91,8 +91,6 @@ class AbstractDiscordModel extends AbstractModel
             $characterShortName = null;
             if ($payloadObject->hasParameter(PayloadParameter::Character)) {
                 $characterShortName = $payloadObject->getParameter(PayloadParameter::Character);
-            } elseif ($payloadObject->hasParameter(PayloadParameter::PlayingCharacter)){
-                $characterShortName = $payloadObject->getParameter(PayloadParameter::PlayingCharacter);
             }
 
             if (!$isGM && $characterShortName !== null){
