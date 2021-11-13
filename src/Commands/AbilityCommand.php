@@ -57,7 +57,10 @@ class AbilityCommand extends AbstractCommand
         $writeCharacterAbility = MinimalismObjectsFactory::create(CharacterAbilitiesDataWriter::class);
         $writeCharacterAbility->update([$characterAbility]);
 
-        $characterCommand = new CharacterCommand($this->request);
+        $characterCommand = new CharacterCommand(
+            request: $this->request,
+            raw: $this->raw,
+        );
         $this->response->addResource(
             $characterCommand->getCharacterResource(
                 updated: true,

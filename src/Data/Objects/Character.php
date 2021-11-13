@@ -195,6 +195,25 @@ class Character extends AbstractDataObject implements ResurceGenerationInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getUserId(
+    ): ?string
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param string $userId
+     */
+    public function setUserId(
+        string $userId,
+    ): void
+    {
+        $this->userId = $userId;
+    }
+
+    /**
      * @return int
      */
     public function getServerId(

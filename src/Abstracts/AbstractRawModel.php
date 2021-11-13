@@ -54,7 +54,6 @@ abstract class AbstractRawModel extends AbstractModel
         );
 
         $this->raw = $services->create(Raw::class);
-        $this->document->meta->add('raw', $this->raw->getVersion());
 
         $this->readCharacter = MinimalismObjectsFactory::create(CharactersDataReader::class);
         $this->readServer = MinimalismObjectsFactory::create(ServersDataReader::class);

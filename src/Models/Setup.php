@@ -5,6 +5,7 @@ use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
 use CarloNicora\Minimalism\Raw\Commands\InitiativeCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Objects\Request;
+use CarloNicora\Minimalism\Raw\Raw;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
 use Exception;
 use GuzzleHttp\Client;
@@ -14,10 +15,13 @@ use RuntimeException;
 class Setup extends AbstractRawModel
 {
     /**
+     * @param Raw $raw
      * @return int
      * @throws Exception
      */
-    public function cli(): int
+    public function cli(
+        Raw $raw,
+    ): int
     {
         $token = $this->getToken();
 
@@ -43,13 +47,13 @@ class Setup extends AbstractRawModel
 
         $emptyRequest = new Request();
         $commands = [
-            //new AbilityCommand($emptyRequest),
-            //new BonusCommand($emptyRequest),
-            //new CampaignCommand($emptyRequest),
-            //new CharacterCommand($emptyRequest),
-            new InitiativeCommand($emptyRequest),
-            //new RollCommand($emptyRequest),
-            //new SessionCommand($emptyRequest),
+            //new AbilityCommand($emptyRequest, $raw),
+            //new BonusCommand($emptyRequest, $raw),
+            //new CampaignCommand($emptyRequest, $raw),
+            //new CharacterCommand($emptyRequest, $raw),
+            new InitiativeCommand($emptyRequest, $raw),
+            //new RollCommand($emptyRequest, $raw),
+            //new SessionCommand($emptyRequest, $raw),
         ];
 
         foreach ($commands as $command) {

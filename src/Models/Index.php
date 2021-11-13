@@ -10,7 +10,7 @@ use CarloNicora\Minimalism\Raw\Commands\RollCommand;
 use CarloNicora\Minimalism\Raw\Commands\SessionCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
-use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractDiscordView;
+use CarloNicora\Minimalism\Raw\Raw;
 use CarloNicora\Minimalism\Raw\Views\BonusDiscordView;
 use CarloNicora\Minimalism\Raw\Views\CampaignDiscordView;
 use CarloNicora\Minimalism\Raw\Views\CharacterDiscordView;
@@ -22,18 +22,18 @@ use Exception;
 class Index extends AbstractRawModel
 {
     /**
+     * @param Raw $raw
      * @param array|null $payload
      * @return int
      * @throws Exception
      */
     public function post(
+        Raw $raw,
         ?array $payload,
     ): int
     {
         try {
             $this->validate(payload: $payload);
-
-            $request = $this->generateRequest($payload);
 
             switch (($payload['data']['name'])){
                 case RawCommand::Roll->value:
@@ -54,7 +54,7 @@ class Index extends AbstractRawModel
                     break;
                 case RawCommand::Ability->value:
                     $this->command = AbilityCommand::class;
-                    $this->view = AbstractDiscordView::class;
+                    $this->view = CharacterDiscordView::class;
                     break;
                 case RawCommand::Bonus->value:
                     $this->command = BonusCommand::class;
@@ -66,8 +66,11 @@ class Index extends AbstractRawModel
                     break;
             }
 
+            $request = $this->generateRequest($payload);
+
             $this->document = (new $this->command(
                 request: $request,
+                raw: $raw,
             ))->execute();
         } catch (Exception $e) {
             $this->document = $this->returnError(exception: $e);

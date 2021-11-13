@@ -28,7 +28,7 @@ class Raw implements ServiceInterface, DefaultServiceInterface
     public function getVersion(
     ): string
     {
-        return InstalledVersions::getVersion(Versions::rootPackageName());
+        return InstalledVersions::getPrettyVersion(Versions::rootPackageName());
     }
 
     /**

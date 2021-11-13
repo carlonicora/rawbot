@@ -18,7 +18,7 @@ abstract class AbstractRawDiscordView extends AbstractDiscordView
     ): DiscordEmbedFooterInterface
     {
         return new DiscordEmbedFooter(
-            text: $type . ($version !== null ? ' (_RAW Bot version ' . $version . '_)' : ''),
+            text: ucfirst($type) . ($version !== null ? ' - RAW Bot v' . $version : ''),
             icon_url: 'https://previews.123rf.com/images/martialred/martialred1512/martialred151200052/49796805-20-sided-20d-dice-line-art-icon-for-apps-and-websites.jpg'
         );
     }

@@ -5,6 +5,7 @@ use CarloNicora\JsonApi\Document;
 use CarloNicora\Minimalism\Raw\Exceptions\ErrorException;
 use CarloNicora\Minimalism\Raw\Interfaces\CommandInterface;
 use CarloNicora\Minimalism\Raw\Objects\Request;
+use CarloNicora\Minimalism\Raw\Raw;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordEmbedInterface;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordInteractionResponseInterface;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbed;
@@ -20,12 +21,16 @@ abstract class AbstractCommand implements CommandInterface
 
     /**
      * @param Request $request
+     * @param Raw $raw
+     * @throws Exception
      */
     public function __construct(
         protected Request $request,
+        protected Raw $raw,
     )
     {
         $this->response = new Document();
+        $this->response->meta->add('version', $raw->getVersion());
     }
 
     /**

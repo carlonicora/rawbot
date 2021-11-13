@@ -31,7 +31,11 @@ class InitiativeDiscordView extends AbstractRawDiscordView
             $characterAbility = $character->relationship('initiative')->resourceLinkage->resources[0];
 
             $nameOnly = ($character->attributes->get('name')??$character->attributes->get('shortname'));
-            $name = $nameOnly . ' (<@' . $character->attributes->get('userId') . '>)';
+            if ($character->attributes->get('isNPC') === false){
+                $name = $nameOnly . ' (<@' . $character->attributes->get('userId') . '>)';
+            } else {
+                $name = $nameOnly;
+            }
             $initiativeEspositionOrder .= ' * ' . $nameOnly . PHP_EOL;
             $initiativeValueEspositionOrder .= $characterAbility->attributes->get('initiative') . ' (_on ' . $characterAbility->attributes->get('ability') . '_)' . PHP_EOL;
             $initiativeActionOrder = ' * ' . $name . PHP_EOL . $initiativeActionOrder;

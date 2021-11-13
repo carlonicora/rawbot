@@ -120,7 +120,7 @@ class CharacterCommand extends AbstractCommand
                 if (!str_starts_with(strtolower($value), 'http')){
                     throw new RuntimeException(RawError::InvalidThumbnailLink->getMessage());
                 }
-                if (!str_ends_with(strtolower($value), '.jpg') || !str_ends_with(strtolower($value), '.png')){
+                if (!in_array(strtolower(substr($value, strlen($value) - 4)), ['.jpg', '.png'])){
                     throw new RuntimeException(RawError::InvalidThumbnailLink->getMessage());
                 }
                 $this->request->getCharacter()?->setThumbnail($value);
@@ -179,13 +179,14 @@ class CharacterCommand extends AbstractCommand
             $this->request->setCharacter(
                 new Character(
                     serverId: $this->request->getServer()?->getId(),
-                    userId: $this->request->getPayload()?->getUser()->getId(),
                     shortname: $this->request->getPayload()?->getParameter(PayloadParameter::Name),
                 )
             );
 
             if ($this->request->isGM()){
                 $this->request->getCharacter()?->setAsNPC();
+            } else {
+                $this->request->getCharacter()?->setUserId(userId: $this->request->getPayload()?->getUser()->getId());
             }
             $updated = true;
         }
@@ -271,7 +272,7 @@ class CharacterCommand extends AbstractCommand
             );
             $abilityResource->attributes->add(
                 name: 'hasBeenUsed',
-                value: in_array($ability['used'], [null, 0, false], true),
+                value: !in_array($ability['used'], [null, 0, false], true),
             );
             $character->relationship(RawTrait::from($ability['trait'])->value)->resourceLinkage->add($abilityResource);
 
