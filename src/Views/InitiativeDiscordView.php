@@ -1,8 +1,8 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Views;
 
-use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
-use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractView;
+use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawDiscordView;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbed;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedField;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedImage;
@@ -10,7 +10,7 @@ use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedThumbnail;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordMessage;
 use Exception;
 
-class InitiativeView extends AbstractView
+class InitiativeDiscordView extends AbstractRawDiscordView
 {
     /**
      * @return array
@@ -77,9 +77,7 @@ class InitiativeView extends AbstractView
             new DiscordEmbed(
                 title: 'Initiative',
                 description: $initiativeDescription,
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Initiative'
-                ),
+                footer: $this->createFooter(RawCommand::Initiative->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                 image: new DiscordEmbedImage('https://media.giphy.com/media/10qKGDzg9kDcXu/giphy-downsized-large.gif'),
                 thumbnail: (($initiativeWinnerThumbnail !== null) ? new DiscordEmbedThumbnail($initiativeWinnerThumbnail) : null),
                 fields: $fields,

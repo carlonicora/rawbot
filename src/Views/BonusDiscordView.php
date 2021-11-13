@@ -2,9 +2,9 @@
 namespace CarloNicora\Minimalism\Raw\Views;
 
 use CarloNicora\JsonApi\Objects\ResourceObject;
+use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawDiscordView;
 use CarloNicora\Minimalism\Raw\Enums\CriticalRoll;
-use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
-use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractView;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordColour;
 use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordFlag;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbed;
@@ -14,7 +14,7 @@ use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedThumbnail;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordMessage;
 use Exception;
 
-class BonusView extends AbstractView
+class BonusDiscordView extends AbstractRawDiscordView
 {
     /** @var ResourceObject  */
     private ResourceObject $bonus;
@@ -81,9 +81,7 @@ class BonusView extends AbstractView
                 title: 'Bonus Assignment',
                 description: $description,
                 color: DiscordColour::Blue->value,
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Bonus'
-                ),
+                footer: $this->createFooter(RawCommand::Bonus->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                 image: new DiscordEmbedImage('https://media.giphy.com/media/mlTGpQTEnbHPy/giphy.gif'),
                 thumbnail: new DiscordEmbedThumbnail($this->character->attributes->get('thumbnail')),
             )
@@ -104,9 +102,7 @@ class BonusView extends AbstractView
                 description: '<@' . $this->character->attributes->get('userId') . '>,' . PHP_EOL
                 . 'you have updated ' . $this->character->attributes->get('name') . '\'s ' . $this->ability->attributes->get('fullName') . ($this->characterAbility->attributes->get('specialisation')==='/' ? '' : '/' . $this->characterAbility->attributes->get('specialisation')) . ' ability by **one** point.',
                 color: DiscordColour::Blue->value,
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Bonus'
-                ),
+                footer: $this->createFooter(RawCommand::Bonus->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                 image: new DiscordEmbedImage('https://media.giphy.com/media/qUDenOaWmXImQ/giphy.gif'),
                 thumbnail: new DiscordEmbedThumbnail($this->character->attributes->get('thumbnail')),
             )
@@ -166,9 +162,7 @@ class BonusView extends AbstractView
                 title: $title,
                 description: $description,
                 color: $color,
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Bonus'
-                ),
+                footer: $this->createFooter(RawCommand::Bonus->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                 image: new DiscordEmbedImage($image),
                 thumbnail: new DiscordEmbedThumbnail($this->character->attributes->get('thumbnail')),
                 fields: $fields,

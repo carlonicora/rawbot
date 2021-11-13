@@ -2,9 +2,9 @@
 namespace CarloNicora\Minimalism\Raw\Views;
 
 use CarloNicora\JsonApi\Objects\ResourceObject;
+use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawDiscordView;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawTrait;
-use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
-use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractView;
 use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordColour;
 use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordFlag;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbed;
@@ -13,7 +13,7 @@ use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedThumbnail;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordMessage;
 use Exception;
 
-class CharacterView extends AbstractView
+class CharacterDiscordView extends AbstractRawDiscordView
 {
     /**
      * @return array
@@ -62,9 +62,7 @@ class CharacterView extends AbstractView
                 title: ($character->attributes->get('isNPC') ? '[NPC]' : '') . $character->attributes->get('name') . ' (_' . $character->attributes->get('shortName') . '_)',
                 description: $character->attributes->get('description')??'',
                 color: $color,
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Character'
-                ),
+                footer: $this->createFooter(RawCommand::Character->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                 thumbnail: ($character->attributes->get('thumbnail') !== null ? new DiscordEmbedThumbnail($character->attributes->get('thumbnail')) : null),
             );
         }
@@ -145,9 +143,7 @@ class CharacterView extends AbstractView
             new DiscordEmbed(
                 title: $character->attributes->get('name'),
                 description: $description,
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Character'
-                ),
+                footer: $this->createFooter(RawCommand::Character->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                 thumbnail: ($character->attributes->get('thumbnail') !== null ? new DiscordEmbedThumbnail($character->attributes->get('thumbnail')) : null),
                 fields: $fields,
             )

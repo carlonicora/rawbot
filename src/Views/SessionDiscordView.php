@@ -1,9 +1,9 @@
 <?php
 namespace CarloNicora\Minimalism\Raw\Views;
 
+use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawDiscordView;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawDocument;
-use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
-use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractView;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbed;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedField;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedImage;
@@ -11,7 +11,7 @@ use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedThumbnail;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordMessage;
 use Exception;
 
-class SessionView extends AbstractView
+class SessionDiscordView extends AbstractRawDiscordView
 {
     /**
      * @return array
@@ -29,12 +29,8 @@ class SessionView extends AbstractView
                     title: 'The game is on!',
                     description: 'It\'s time to **stop the chattering** and **get ready to roll**!' . PHP_EOL
                     . 'The session is officially started. You can now `/roll` your abilities when needed!',
-                    footer: DiscordMessageFactory::createFooter(
-                        type: 'Session'
-                    ),
-                    image: DiscordMessageFactory::createImage(
-                        url: 'https://media.giphy.com/media/zf8yrM8nVERvW/source.gif'
-                    ),
+                    footer: $this->createFooter(RawCommand::Session->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
+                    image: new DiscordEmbedImage(url: 'https://media.giphy.com/media/zf8yrM8nVERvW/source.gif'),
                 )
             );
         } else {
@@ -42,9 +38,7 @@ class SessionView extends AbstractView
                 new DiscordEmbed(
                     title: 'That\'s a wrap!',
                     description: 'This is the end of tonight\'s session! I hope you enjoyed!',
-                    footer: DiscordMessageFactory::createFooter(
-                        type: 'Session'
-                    ),
+                    footer: $this->createFooter(RawCommand::Session->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                     image: new DiscordEmbedImage('https://media.giphy.com/media/lD76yTC5zxZPG/giphy.gif'),
                 )
             );
@@ -73,9 +67,7 @@ class SessionView extends AbstractView
                 $characterEmbed = new DiscordEmbed(
                     title: $characterResource->attributes->get('name'),
                     description: $characterMessage,
-                    footer: DiscordMessageFactory::createFooter(
-                        type: 'Session'
-                    ),
+                    footer: $this->createFooter(RawCommand::Session->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                     thumbnail: ($characterResource->attributes->get('thumbnail') !== null ? new DiscordEmbedThumbnail($characterResource->attributes->get('thumbnail')) : null),
                 );
 

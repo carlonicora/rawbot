@@ -3,6 +3,8 @@ namespace CarloNicora\Minimalism\Raw;
 
 use CarloNicora\Minimalism\Interfaces\DefaultServiceInterface;
 use CarloNicora\Minimalism\Interfaces\ServiceInterface;
+use Composer\InstalledVersions;
+use PackageVersions\Versions;
 
 class Raw implements ServiceInterface, DefaultServiceInterface
 {
@@ -18,6 +20,15 @@ class Raw implements ServiceInterface, DefaultServiceInterface
         private string $DISCORD_ENDPOINT,
     )
     {
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion(
+    ): string
+    {
+        return InstalledVersions::getVersion(Versions::rootPackageName());
     }
 
     /**

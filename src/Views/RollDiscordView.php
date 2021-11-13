@@ -2,18 +2,19 @@
 namespace CarloNicora\Minimalism\Raw\Views;
 
 use CarloNicora\JsonApi\Objects\ResourceObject;
+use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawDiscordView;
 use CarloNicora\Minimalism\Raw\Enums\CriticalRoll;
+use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawDocument;
-use CarloNicora\Minimalism\Raw\Factories\DiscordMessageFactory;
-use CarloNicora\Minimalism\Raw\Services\Discord\Abstracts\AbstractView;
 use CarloNicora\Minimalism\Raw\Services\Discord\Enums\DiscordColour;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbed;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedField;
+use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedImage;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordEmbedThumbnail;
 use CarloNicora\Minimalism\Raw\Services\Discord\Messages\DiscordMessage;
 use Exception;
 
-class RollView extends AbstractView
+class RollDiscordView extends AbstractRawDiscordView
 {
     /**
      * @return array
@@ -79,19 +80,30 @@ class RollView extends AbstractView
 
         $textReference .= ' ' . PHP_EOL . $roll->attributes->get('successes') . ' successes';
 
+
+        $url = match(CriticalRoll::from($roll->attributes->get('critical'))) {
+            CriticalRoll::Success => 'https://media.giphy.com/media/Z9KdRxSrTcDHGE6Ipf/giphy.gif',
+            CriticalRoll::Failure => 'https://vignette.wikia.nocookie.net/kingsway-role-playing-group/images/a/ab/A7c1d56e7cdb84ee25e6769d9c7b9910--tabletop-rpg-tabletop-games.jpg',
+            CriticalRoll::None => null,
+        };
+
+        $image = null;
+        if ($url !== null){
+            $image = new DiscordEmbedImage(
+                url: $url
+            );
+        }
+
         $message->addEmbed(
             new DiscordEmbed(
                 title: $ability->attributes->get('name') . (($characterAbility->attributes->get('specialisation') === '/') ? '' : '/' . $characterAbility->attributes->get('specialisation')) . ' check for ' . ($character->attributes->get('name')??$character->attributes->get('shortName')),
                 color: $colour,
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Ability check'
-                ),
-                image: DiscordMessageFactory::createRollImage(
-                    type: CriticalRoll::from($roll->attributes->get('critical'))
-                ),
+                footer: $this->createFooter(RawCommand::Ability->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
+                image: $image,
                 thumbnail: new DiscordEmbedThumbnail(
                     $character->attributes->get('thumbnail')
-                ), fields: [
+                ),
+                fields: [
                 new DiscordEmbedField(
                     name: 'Reference',
                     value: $textReference,
@@ -139,9 +151,7 @@ class RollView extends AbstractView
         $message->addEmbed(
             new DiscordEmbed(
                 title: $this->document->meta->get('dice') . ' Dice Roll',
-                footer: DiscordMessageFactory::createFooter(
-                    type: 'Dice Roll'
-                ),
+                footer: $this->createFooter(RawCommand::Dice->value, ($this->document->meta->has('version') ? $this->document->meta->get('version') : null )),
                 fields: [
                     new DiscordEmbedField(
                         name: 'Dice',

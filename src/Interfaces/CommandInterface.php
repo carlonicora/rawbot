@@ -4,6 +4,8 @@ namespace CarloNicora\Minimalism\Raw\Interfaces;
 use CarloNicora\JsonApi\Document;
 use CarloNicora\Minimalism\Raw\Objects\Request;
 use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\ApplicationCommandInterface;
+use CarloNicora\Minimalism\Raw\Services\Discord\Interfaces\DiscordInteractionResponseInterface;
+use Exception;
 
 interface CommandInterface
 {
@@ -28,4 +30,14 @@ interface CommandInterface
     public function getDefinition(
         ?int $serverId=null,
     ): ApplicationCommandInterface;
+
+    /**
+     * @param Exception|null $error
+     * @param string|null $description
+     * @return DiscordInteractionResponseInterface
+     */
+    public static function generateError(
+        ?Exception $error=null,
+        ?string $description=null,
+    ): DiscordInteractionResponseInterface;
 }
