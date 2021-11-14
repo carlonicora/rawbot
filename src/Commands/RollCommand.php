@@ -87,6 +87,12 @@ class RollCommand extends AbstractCommand
             $total -= 10;
         }
 
+        if ($critical === CriticalRoll::Success){
+            $total += 20;
+        } elseif ($critical === CriticalRoll::Failure){
+            $total -= 21;
+        }
+
         if ($total < 0){
             $successes = 0;
         } else {

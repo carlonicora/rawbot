@@ -12,10 +12,10 @@ class ApplicationCommandOption implements ApplicationCommandOptionInterface
     private array $options=[];
 
     /** @var int|float|null  */
-    private int|float|null $minValue;
+    private int|float|null $minValue=null;
 
     /** @var int|float|null  */
-    private int|float|null $maxValue;
+    private int|float|null $maxValue=null;
 
     /**
      * @param ApplicationCommandOptionType $type

@@ -2,7 +2,13 @@
 namespace CarloNicora\Minimalism\Raw\Models;
 
 use CarloNicora\Minimalism\Raw\Abstracts\AbstractRawModel;
+use CarloNicora\Minimalism\Raw\Commands\AbilityCommand;
+use CarloNicora\Minimalism\Raw\Commands\BonusCommand;
+use CarloNicora\Minimalism\Raw\Commands\CampaignCommand;
+use CarloNicora\Minimalism\Raw\Commands\CharacterCommand;
 use CarloNicora\Minimalism\Raw\Commands\InitiativeCommand;
+use CarloNicora\Minimalism\Raw\Commands\RollCommand;
+use CarloNicora\Minimalism\Raw\Commands\SessionCommand;
 use CarloNicora\Minimalism\Raw\Enums\RawCommand;
 use CarloNicora\Minimalism\Raw\Objects\Request;
 use CarloNicora\Minimalism\Raw\Raw;
@@ -51,7 +57,7 @@ class Setup extends AbstractRawModel
             //new BonusCommand($emptyRequest, $raw),
             //new CampaignCommand($emptyRequest, $raw),
             //new CharacterCommand($emptyRequest, $raw),
-            new InitiativeCommand($emptyRequest, $raw),
+            //new InitiativeCommand($emptyRequest, $raw),
             //new RollCommand($emptyRequest, $raw),
             //new SessionCommand($emptyRequest, $raw),
         ];
