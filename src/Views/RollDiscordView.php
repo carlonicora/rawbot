@@ -53,7 +53,7 @@ class RollDiscordView extends AbstractRawDiscordView
         if ($roll->attributes->get('critical') === CriticalRoll::Success->value) {
             $textReference .= '**Critical Success**' . PHP_EOL;
             $textValues .= '+20' . PHP_EOL;
-        } elseif ($roll->attributes->get('critical') === CriticalRoll::Success->value) {
+        } elseif ($roll->attributes->get('critical') === CriticalRoll::Failure->value) {
             $textReference .= '**Critical Failure**' . PHP_EOL;
             $textValues .= '-20' . PHP_EOL;
         }
