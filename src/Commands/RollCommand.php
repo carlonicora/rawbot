@@ -127,15 +127,7 @@ class RollCommand extends AbstractCommand
         $dice = $this->request->getPayload()?->getParameter(PayloadParameter::Dice);
         $bonus = $this->request->getPayload()?->getParameter(PayloadParameter::Bonus);
 
-        try {
-            [$quantity, $sides] = explode('d', $dice);
-
-            if (!is_int((int)$quantity) || !is_int($sides)){
-                throw new RuntimeException('Wrong dice - 1');
-            }
-        } catch (Exception) {
-            throw new RuntimeException('Wrong dice - 2');
-        }
+        [$quantity, $sides] = explode('d', $dice);
 
         $total = 0;
 
