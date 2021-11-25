@@ -130,14 +130,14 @@ class RollCommand extends AbstractCommand
         try {
             [$quantity, $sides] = array_map('intval', explode('d', $dice));
             if (!is_int((int)$quantity) || !is_int($sides) || $quantity !== 0 || $sides !== 0){
-                throw new RuntimeException('Wrong dice');
+                throw new RuntimeException('Wrong dice - 1');
             }
         } catch (Exception) {
-            throw new RuntimeException('Wrong dice');
+            throw new RuntimeException('Wrong dice - 2');
         }
 
         if (!is_int((int)$quantity) && !is_int($sides)){
-            throw new RuntimeException('Wrong dice');
+            throw new RuntimeException('Wrong dice - 3');
         }
 
         $total = 0;
