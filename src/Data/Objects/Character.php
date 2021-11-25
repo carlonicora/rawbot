@@ -1,5 +1,4 @@
 <?php
-
 namespace CarloNicora\Minimalism\Raw\Data\Objects;
 
 use CarloNicora\JsonApi\Objects\ResourceObject;

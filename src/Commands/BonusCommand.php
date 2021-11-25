@@ -153,11 +153,24 @@ class BonusCommand extends AbstractCommand
     }
 
     /**
+     *
+     */
+    private function checkAvailableBonusPoints(
+    ): void
+    {
+        if ($this->request->getCharacter()?->getBonus() <= 0) {
+            throw new RuntimeException('You do not have bonus points available');
+        }
+    }
+
+    /**
      * @throws Exception
      */
     private function up(
     ): void
     {
+        $this->checkAvailableBonusPoints();
+
         $characterAbility = $this->getCharacterAbility();
 
         if (!$characterAbility->hasBeenUpdated()){
@@ -179,6 +192,8 @@ class BonusCommand extends AbstractCommand
     private function roll(
     ): void
     {
+        $this->checkAvailableBonusPoints();
+
         $characterAbility = $this->getCharacterAbility();
         $this->addBonus(-1);
 

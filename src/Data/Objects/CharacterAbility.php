@@ -249,6 +249,10 @@ class CharacterAbility extends AbstractDataObject implements ResurceGenerationIn
         $response->attributes->add('hasBeenUsed', $this->hasBeenUsed);
         $response->attributes->add('hasBeenUpdated', $this->hasBeenUpdated);
 
+        $response->relationship('ability')->resourceLinkage->add(
+            $this->ability->generateResourceObject()
+        );
+
         return $response;
     }
 }
