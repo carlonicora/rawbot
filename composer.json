@@ -1,7 +1,7 @@
 {
   "name": "carlonicora/raw",
   "description": "Raw API for Discord",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "homepage": "https://carlonicora.com",
   "time": "2021-04-08",
   "type": "project",
@@ -21,7 +21,6 @@
     "carlonicora/jsonapi": "~3.0",
     "carlonicora/minimalism": "~13.0",
     "carlonicora/minimalism-service-mysql": "~5.0",
-    "carlonicora/minimalism-service-builder": "~2.0.0-beta1",
     "carlonicora/minimalism-service-encrypter": "~3.0",
     "ocramius/package-versions": "~2.1",
     "discord/interactions": "^1.0",
