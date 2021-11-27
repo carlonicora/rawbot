@@ -113,7 +113,7 @@ class CharacterDiscordView extends AbstractRawDiscordView
         $fields[] = new DiscordEmbedField(
             name: 'Additional stats',
             value: 'Bonus points available: ' . $character->attributes->get('bonus') . PHP_EOL
-            . 'Damages: ' . $character->attributes->get('bonus') . ' (_' . $character->attributes->get('lifePoints') . ' life points available_)',
+            . 'Damages: ' . $character->attributes->get('damages') . ' (_' . $character->attributes->get('lifePoints') . ' life points available_)',
             inline: false
         );
 
