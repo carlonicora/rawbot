@@ -41,6 +41,7 @@ class CharacterAbility extends AbstractDataObject implements ResurceGenerationIn
      * @param int|null $value
      * @param bool|null $hasBeenUsed
      * @param bool|null $hasBeenUpdated
+     * @param int|null $levelOfChildrenToLoad
      * @throws Exception
      */
     public function __construct(
@@ -51,10 +52,14 @@ class CharacterAbility extends AbstractDataObject implements ResurceGenerationIn
         ?int $value=0,
         ?bool $hasBeenUsed=false,
         ?bool $hasBeenUpdated=false,
+        ?int $levelOfChildrenToLoad=0,
     )
     {
         if ($data !== null) {
-            parent::__construct($data);
+            parent::__construct(
+                data: $data,
+                levelOfChildrenToLoad: $levelOfChildrenToLoad,
+            );
         } else {
             $this->characterId = $characterId??throw new RuntimeException('Character Id missing', 412);
             $this->abilityId = $abilityId??throw new RuntimeException('Ability Id missing', 412);

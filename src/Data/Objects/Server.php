@@ -35,10 +35,14 @@ class Server extends AbstractDataObject implements ResurceGenerationInterface
         ?string $gm=null,
         ?string $campaign=null,
         ?bool $inSession=false,
+        ?int $levelOfChildrenToLoad=0,
     )
     {
         if ($data !== null) {
-            parent::__construct($data);
+            parent::__construct(
+                data: $data,
+                levelOfChildrenToLoad: $levelOfChildrenToLoad,
+            );
         } else {
             $this->id = $id;
             $this->settingId = $settingId;

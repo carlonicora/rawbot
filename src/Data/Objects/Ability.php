@@ -44,6 +44,7 @@ class Ability extends AbstractDataObject implements ResurceGenerationInterface
      * @param bool|null $canChallenge
      * @param bool|null $canBeOpposed
      * @param bool|null $definesInitiative
+     * @param int|null $levelOfChildrenToLoad
      */
     public function __construct(
         ?array $data = null,
@@ -55,10 +56,14 @@ class Ability extends AbstractDataObject implements ResurceGenerationInterface
         ?bool $canChallenge=false,
         ?bool $canBeOpposed=false,
         ?bool $definesInitiative=false,
+        ?int $levelOfChildrenToLoad=0,
     )
     {
         if ($data !== null) {
-            parent::__construct($data);
+            parent::__construct(
+                data: $data,
+                levelOfChildrenToLoad: $levelOfChildrenToLoad,
+            );
         } else {
             $this->id = $id??throw new RuntimeException('Character Id missing', 412);
             $this->settingId = $settingId??throw new RuntimeException('Ability Id missing', 412);

@@ -72,6 +72,7 @@ class Character extends AbstractDataObject implements ResurceGenerationInterface
      * @param string|null $description
      * @param bool|null $automaticallyAcceptChallenges
      * @param string|null $thumbnail
+     * @param int|null $levelOfChildrenToLoad
      */
     public function __construct(
         ?array $data = null,
@@ -90,10 +91,14 @@ class Character extends AbstractDataObject implements ResurceGenerationInterface
         ?string $description=null,
         ?bool $automaticallyAcceptChallenges=false,
         ?string $thumbnail=null,
+        ?int $levelOfChildrenToLoad=0,
     )
     {
         if ($data !== null) {
-            parent::__construct($data);
+            parent::__construct(
+                data: $data,
+                levelOfChildrenToLoad: $levelOfChildrenToLoad,
+            );
         } else {
             $this->id = $id;
             $this->serverId = $serverId??throw new RuntimeException('Server Id missing', 412);
