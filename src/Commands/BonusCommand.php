@@ -209,6 +209,7 @@ class BonusCommand extends AbstractCommand
             }
 
             $characterAbility->addValue($bonus);
+            $characterAbility->markAsUpdated();
             $this->updateCharacterAbility($characterAbility);
         } else {
             $bonus = 0;
